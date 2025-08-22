@@ -10,14 +10,14 @@
 
 #### 物品清单
 
-1.  MeowKit
-2.  Lanyard
-3.  Micro sd card Lexar 32GB
-4.  Reader
-5.  USB Type-C cable
-6.  Leather USB cable tie
-7.  Postcard
-8.  Bread board line
+1. **MeowKit**
+2. **Lanyard**
+3. **Micro SD Card** (Lexar 32GB)
+4. **Card Reader**
+5. **USB Type-C Cable**
+6. **Leather USB Cable Tie**
+7. **Postcard**
+8. **Breadboard Jumper Wires**
 
 #### 可能问题&解决
 
@@ -40,27 +40,45 @@
 
 #### 更新固件
 
-a.下载[MeowKit](https://github.com/happy-mingo/MeowKit)->code->download zip,将固件文件保存至本地电脑.
+1. **下载固件**
+   - 访问 [MeowKit GitHub](https://github.com/happy-mingo/MeowKit) → 点击 **Code** → **Download ZIP**，将固件文件保存到本地电脑。
 
-b.浏览器访问烧录网址：https://espressif.github.io/esp-launchpad/
+2. **打开烧录网页**
+   - 在浏览器中访问：[ESP Launchpad](https://espressif.github.io/esp-launchpad/)
 
-​c.将MeowKit连接usb到电脑，点击Connect选择 “USB JTAG/serial debug unit（COM xx）”
+3. **连接设备**
+   - 将 MeowKit 通过 USB 连接到电脑。
+   - 点击 **Connect**，选择 `USB JTAG/serial debug unit (COM xx)`。
 
-​d.点击DIY开发板COM端口被浏览器连接后，网页会显示 Connected to device: ESP32-S3 字样，同时，菜单 Connect 会变为 Disconnect ，表示开发板COM端口连接成功。
+4. **确认连接**
+   - 连接成功后，网页会显示：
+     ```
+     Connected to device: ESP32-S3
+     ```
+   - 此时菜单 **Connect** 会变为 **Disconnect**，表示 COM 端口连接成功。
 
-e.selected file and flash address,添加下面3个文件. 点击program.
+5. **选择文件并设置烧录地址**
+   - 点击 **Selected file and flash address**，添加以下文件：
+     - `bootloader.bin` → **0x0**
+     - `partitions.bin` → **0x8000**
+     - `firmware.bin` → **0x10000**
+   - 点击 **Program** 开始烧录。
 
-​		`bootloader.bin` → **0x0**
+6. **查看烧录进程**
+   - 烧录过程中，网页会自动跳转到 **Console** 控制台，显示烧录进度。
+   - 当控制台显示：
+     ```
+     写入完成 100% 
+     Leaving...
+     ```
+     提示信息后，表示烧录完成。
 
-​		`partitions.bin` → **0x8000**
+7. **重启设备**
+   - 固件烧录完成后，设备不会自动重启。
+   - 请点击网页上的 **Reset Device** 按钮，然后点击 **Confirm** 按钮，确认重启开发板以启动刚烧录的固件程序。
 
-​		`	firmware.bin` → **0x10000**
 
-f.开始烧录后，网页会自动跳转到 Console 控制台命令行 菜单页面，显示烧录进程，如下图示：当在控制台黑屏上看到写入完成100%并提示离开Leaving...提示信息之后，点击右侧的重启设备按钮，重新启动开发板，就可以看到程序烧录成功了。
-
-​g.固件烧录完成后，设备不会自动重启，需要动手重启设备，这里请点击网页上的 Reset Device 按钮（下图位置1），并再次确认 点击 Comfirm 按钮（下图位置2），确认重启开发板，以启动运行刚才烧录的固件程序。
-
-## 基本使用说明
+#### 上手操作
 
 1. 长按开机键3秒
 2. 进入bsp界面，并提示按压A/B按键（显示“bsp init done”）
@@ -71,15 +89,16 @@ f.开始烧录后，网页会自动跳转到 Console 控制台命令行 菜单�
 #### 图形界面指南
 
 
-## 固件架构
+#### 固件架构
 
 
-## 硬件规格
+#### 硬件规格
 
 
-## 一起加入
+#### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
