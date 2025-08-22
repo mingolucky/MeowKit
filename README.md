@@ -94,7 +94,7 @@
 
 #### 上手操作
 
-![本地图片](2.assets/get start.png)
+![本地图片](2.assets/getstart.png)
 
 1. **开机**：长按开机键 3 秒。  
 2. **初始化 BSP**：进入 BSP 界面，屏幕会提示按压 A/B 按键（显示 “bsp init done”）。  
@@ -114,6 +114,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
