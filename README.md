@@ -105,6 +105,8 @@
 
 #### 界面指南
 
+#####The graphical interface includes a clock, home, app menu, SD‑card file manager, and control center. With SD‑card file management (littleFS) and the Mooncake multi‑app management and scheduling framework for microcontrollers (by Forairaaaaa), you can easily build and add your own applications.
+
 ![本地图片](2.assets/ui.png)
 
 
@@ -114,6 +116,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
