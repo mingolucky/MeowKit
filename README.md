@@ -1,10 +1,10 @@
 ### **MeowKit — Versatile Device for Makers**
 
-[图片]
-
-​	This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, hacking protocol exploration, DIY hardware expansion, desktop gadget integration, and more — powered by a fully **open-source SDK** . **Built for makers and geeks**, it's designed to be a powerful yet easy-to-use development **platform**.
 
 
+​	This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, hacking protocol exploration, DIY hardware expansion, desktop gadget integration, and more — powered by a fully **open-source SDK** . **Built for makers and hackers**, it's designed to be a powerful yet easy-to-use development **platform**.
+
+![专案图像](C:\Users\zmm04\Desktop\专案图像.png)
 
 ### 收到包裹
 
@@ -47,17 +47,52 @@
 
 ![img](https://qcn8zpde8b3j.feishu.cn/space/api/box/stream/download/asynccode/?code=NDEyMDc0YzQ2MmQwNzdlMjgxNDFhZGRjYmIyNDlkZDNfRjNlN2dEU1pyZk5JQlFLaUpiV2pvMktyNmR3MTFOaEtfVG9rZW46QmR1Y2JNYnVmb2NzZWF4cXNwSWNrWmN1bldoXzE3NTU4NDg0MTg6MTc1NTg1MjAxOF9WNA)
 
-1.
+a.下载[MeowKit](https://github.com/happy-mingo/MeowKit)->code->download zip,将固件文件保存至本地电脑.
 
-## 开机
+b.浏览器访问烧录网址：https://espressif.github.io/esp-launchpad/
 
-1. 长按开机键2~3秒
+​	i.将MeowKit连接usb到电脑，点击Connect选择 “USB JTAG/serial debug unit（COM xx）”
+
+​	![image-20250822161705055](C:\Users\zmm04\AppData\Roaming\Typora\typora-user-images\image-20250822161705055.png)
+
+​	ii.点击DIY开发板COM端口被浏览器连接后，网页会显示 Connected to device: ESP32-S3 字样，同时，菜单 Connect 会变为 Disconnect ，表示开发板COM端口连接成功。
+
+​	![image-20250822162649289](C:\Users\zmm04\AppData\Roaming\Typora\typora-user-images\image-20250822162649289.png)
+
+​	iii.selected file and flash address,添加下面3个文件. 点击program.
+
+​		`bootloader.bin` → **0x0**
+
+​		`partitions.bin` → **0x8000**
+
+​		`	firmware.bin` → **0x10000**
+
+![image-20250822163423424](C:\Users\zmm04\AppData\Roaming\Typora\typora-user-images\image-20250822163423424.png)
+
+​	iv.开始烧录后，网页会自动跳转到 Console 控制台命令行 菜单页面，显示烧录进程，如下图示：当在控制台黑屏上看到写入完成100%并提示离开Leaving...提示信息之后，点击右侧的重启设备按钮，重新启动开发板，就可以看到程序烧录成功了。
+
+![image-20250822163643566](C:\Users\zmm04\AppData\Roaming\Typora\typora-user-images\image-20250822163643566.png)
+
+​	v.固件烧录完成后，设备不会自动重启，需要动手重启设备，这里请点击网页上的 Reset Device 按钮（下图位置1），并再次确认 点击 Comfirm 按钮（下图位置2），确认重启开发板，以启动运行刚才烧录的固件程序。
+
+![image-20250822163901663](C:\Users\zmm04\AppData\Roaming\Typora\typora-user-images\image-20250822163901663.png)
+
+
+
+
+
+
+
+## 基本使用说明
+
+1. 长按开机键3秒
 2. 进入bsp界面，并提示按压A/B按键（显示“bsp init done”）
 3. MeowKit进入操作界面
 
-4. 进入apps菜单页面，单击打开应用
+4. 进入apps菜单页面，单击icon打开应用
+5. 长按B键退出应用，退回apps菜单页面
 
-## 图形界面指南
+#### 图形界面指南
 
 ![img](https://qcn8zpde8b3j.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGZhNTg4YjIyZTZlZWM0NzAyODA0ZWUyNzYzNjRiMzlfc2owSUdpVzNQYkMwZTM2eGdZdDJ4Y0pJN1lYbFVVaXlfVG9rZW46VG5yRmJjZmo4b2t0Nkx4VzZQU2NheVVkbnRoXzE3NTU4NDg0MTg6MTc1NTg1MjAxOF9WNA)
 
