@@ -80,11 +80,12 @@
 
 #### 上手操作
 
-1. 长按开机键3秒
-2. 进入bsp界面，并提示按压A/B按键（显示“bsp init done”）
-3. MeowKit进入操作界面
-4. 进入apps菜单页面，单击icon打开应用
-5. 长按B键退出应用，退回apps菜单页面
+1. **开机**：长按开机键 3 秒。  
+2. **初始化 BSP**：进入 BSP 界面，屏幕会提示按压 A/B 按键（显示 “bsp init done”）。  
+3. **进入操作界面**：MeowKit 自动进入主操作界面。  
+4. **打开应用**：进入 **Apps 菜单** 页面，单击图标打开应用。  
+5. **退出应用**：长按 **B 键**，退出应用并返回 Apps 菜单页面。
+
 
 #### 图形界面指南
 
@@ -98,6 +99,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
