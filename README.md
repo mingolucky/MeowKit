@@ -1,6 +1,7 @@
 ### **MeowKit — Versatile Device for Makers**
 
 ​This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, hacking protocol exploration, DIY hardware expansion, desktop gadget integration, and more — powered by a fully **open-source SDK** . **Built for makers and hackers**, it's designed to be a powerful yet easy-to-use development **platform**.
+
 ![本地图片](2.assets/header.png)
 
 ### 收到包裹
@@ -109,4 +110,5 @@ b.浏览器访问烧录网址：https://espressif.github.io/esp-launchpad/
 
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
