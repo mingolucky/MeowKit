@@ -63,7 +63,7 @@
     - 点击 **Selected file and flash address**，添加以下文件：
        - `bootloader.bin` → `0x0`
        - `partitions.bin` → `0x8000`
-       - `firmware.bin` → `0x10000`
+       - `meowkit.bin` → `0x10000`
     - 点击 **Program** 开始烧录。
     
     AI Chat & MCP 固件
@@ -111,6 +111,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
