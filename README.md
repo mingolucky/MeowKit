@@ -4,7 +4,6 @@
 
 ​	This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, hacking protocol exploration, DIY hardware expansion, desktop gadget integration, and more — powered by a fully **open-source SDK** . **Built for makers and hackers**, it's designed to be a powerful yet easy-to-use development **platform**.
 
-![专案图像](C:\Users\zmm04\Desktop\专案图像.png)
 
 ### 收到包裹
 
@@ -109,5 +108,6 @@ b.浏览器访问烧录网址：https://espressif.github.io/esp-launchpad/
 ![img](https://qcn8zpde8b3j.feishu.cn/space/api/box/stream/download/asynccode/?code=ZWFjMDc5OTBhOGU5NzY3YjAzMDE4ZTIxOGQ4ZGJlMTNfNFVRQUR1S3FTYWlyM041bldBNUxTYUhDdzY2cVlQZEdfVG9rZW46THVKRGI1SWRzb0lxbzd4b0VQRGN4RDlsbjZWXzE3NTU4NDg0MTg6MTc1NTg1MjAxOF9WNA)
 
 ## 一起加入
+
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
