@@ -57,14 +57,26 @@
      ```
    - 此时菜单 **Connect** 会变为 **Disconnect**，表示 COM 端口连接成功。
 
-5. **选择文件并设置烧录地址**
-   - 点击 **Selected file and flash address**，添加以下文件：
-     - `bootloader.bin` → **0x0**
-     - `partitions.bin` → **0x8000**
-     - `firmware.bin` → **0x10000**
-   - 点击 **Program** 开始烧录。
+5. **选择固件文件并设置烧录地址**
 
-6. **查看烧录进程**
+    Hacker Protocol & Desktop Gadgets 固件
+    - 点击 **Selected file and flash address**，添加以下文件：
+       - `bootloader.bin` → `0x0`
+       - `partitions.bin` → `0x8000`
+       - `firmware.bin` → `0x10000`
+    - 点击 **Program** 开始烧录。
+    
+    AI Chat & MCP 固件
+    - 点击 **Selected file and flash address**，添加以下文件：
+       - `bootloader.bin` → `0x0`
+       - `partition-table.bin` → `0x8000`
+       - `ota_data_initial.bin` → `0xd000`
+       - `srmodels.bin` → `0x10000`
+       - `xiaozhi.bin` → `0x100000`
+    - 点击 **Program** 开始烧录。
+
+
+7. **查看烧录进程**
    - 烧录过程中，网页会自动跳转到 **Console** 控制台，显示烧录进度。
    - 当控制台显示：
      ```
@@ -73,7 +85,7 @@
      ```
      提示信息后，表示烧录完成。
 
-7. **重启设备**
+8. **重启设备**
    - 固件烧录完成后，设备不会自动重启。
    - 请点击网页上的 **Reset Device** 按钮，然后点击 **Confirm** 按钮，确认重启开发板以启动刚烧录的固件程序。
 
@@ -99,6 +111,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
