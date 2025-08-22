@@ -27,7 +27,7 @@
 #### 可能问题&解决
 
 ##### a. 黑灰粉尘
-- 黑灰粉尘为正常现象，无害。
+- 黑灰粉尘为激光切割蜂窝纸板边缘烧结产品，自然无害。
   - 避免触碰纸板边缘。
   - 若手上沾灰，请先清洗再操作主机。
 
@@ -119,6 +119,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
