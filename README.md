@@ -10,16 +10,19 @@
 
 当您第一次收到MeowKit团队全员动手寄出的包裹,请先查看有哪些东西以及注意事项.
 
-#### 物品清单
+#### 📦 物品清单
 
-1. **MeowKit**
-2. **Lanyard**
-3. **Micro SD Card** (Lexar 32GB)
-4. **Card Reader**
-5. **USB Type-C Cable**
-6. **Leather USB Cable Tie**
-7. **Postcard**
-8. **Breadboard Jumper Wires**
+| #  | Item                    | 描述/备注            |
+|----|--------------------------|----------------------|
+| 1  | **MeowKit**              | 主机本体             |
+| 2  | **Lanyard**              | 挂绳                 |
+| 3  | **Micro SD Card**        | Lexar 32GB           |
+| 4  | **Card Reader**          | 读卡器               |
+| 5  | **USB Type-C Cable**     | 数据线               |
+| 6  | **Leather USB Cable Tie**| 真皮理线带           |
+| 7  | **Postcard**             | 明信片               |
+| 8  | **Breadboard Jumper Wires** | 面包板跳线        |
+
 
 #### 可能问题&解决
 
@@ -116,6 +119,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
