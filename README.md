@@ -14,27 +14,27 @@
 
 | #  | Item                    | 描述/备注            |
 |----|--------------------------|----------------------|
-| 1  | **MeowKit**              | 主机本体             |
-| 2  | **Lanyard**              | 挂绳                 |
+| 1  | **MeowKit**              |                      |
+| 2  | **Lanyard**              |                      |
 | 3  | **Micro SD Card**        | Lexar 32GB           |
-| 4  | **Card Reader**          | 读卡器               |
-| 5  | **USB Type-C Cable**     | 数据线               |
-| 6  | **Leather USB Cable Tie**| 真皮理线带           |
-| 7  | **Postcard**             | 明信片               |
-| 8  | **Breadboard Jumper Wires** | 面包板跳线        |
+| 4  | **Card Reader**          |                      |
+| 5  | **USB Type-C Cable**     |                      |
+| 6  | **Leather USB Cable Tie**|                      |
+| 7  | **Postcard**             |                      |
+| 8  | **Breadboard Jumper Wires** |                   |
 
 
 #### 可能问题&解决
 
-##### a. 黑灰粉尘
-- 黑灰粉尘为激光切割蜂窝纸板边缘烧结产品，自然无害。
+##### a. 黑色粉末
+- 黑色粉末为激光切割蜂窝纸板边缘烧结产品，自然无害。
   - 避免触碰纸板边缘。
   - 若手上沾灰，请先清洗再操作主机。
 
 ##### b. 物流与运输
 - 运输过程中可能导致电量耗尽或后壳松动。
-  - 使用 USB-C 充电，直至红灯熄灭表示充满电。
-  - 使用 T5 螺丝刀拧紧后盖。
+  -  USB-C 线充电，直至红灯熄灭表示充满电。
+  -  T5 螺丝刀拧紧后盖。
 
 ##### c. A/B 按键手感
 - 新机按键初期略紧。
@@ -119,6 +119,7 @@
 #### 一起加入
 
 At the very beginning of the project, we have chosen the tactics of maximum openness and transparency. We believe in open-source, the power of the community, and that enthusiasts can create cool projects without the involvement of large corporations. Therefore, we invite everyone interested in the project to take part in the development!
+
 
 
 
