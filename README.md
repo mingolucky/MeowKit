@@ -113,7 +113,9 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 #### AI Chat&MCP
 
 It integrates large language models (LLMs) such as Qwen, DeepSeek, and ChatGPT, supporting natural, multilingual conversations in Chinese, English, Japanese, Korean, and more. It features real‑time speech recognition and human‑like TTS voice synthesis. 
-[picture]
+
+![ai_chat](2.assets/ai_chat.png)
+
 #### 1. First Boot
 
 a. After flashing and rebooting the device, **MeowKit** will enter the **Wi-Fi Configuration Page** for the first time.  
@@ -121,12 +123,14 @@ b. On your phone or computer, open **Wi-Fi settings**, find and connect to the h
 c. It will automatically redirect (or you can manually open):  
    👉 [http://192.168.4.1](http://192.168.4.1)  
 d. Select your Wi-Fi network on the page and enter the password.  
-[picture]
+
+![wlan](2.assets/wlan.png)
+
 #### 2. Successful Network Connection
 
 - The device will **play a machine code** and display it on the screen.  
 - Open your browser and visit 👉 [https://xiaozhi.me/](https://xiaozhi.me/)  
-- Enter the displayed **machine code** to bind your device with the AI agent.  
+- Enter the displayed **machine code** to bind your device with the AI agent.
 
 #### 3. Personalization
 
@@ -136,7 +140,6 @@ On the [xiaozhi.me](https://xiaozhi.me/) platform, you can customize:
 - **Memory**  
 - **Interaction preferences**  
 Click **Save** to apply the settings.  
-[picture]
 
 #### 4. Getting Started
 
@@ -165,5 +168,6 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
