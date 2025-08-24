@@ -138,7 +138,7 @@ It integrates large language models (LLMs) such as Qwen, DeepSeek, and ChatGPT, 
 #### 1. First Boot
 
 a. After flashing and rebooting the device, **MeowKit** will enter the **Wi-Fi Configuration Page** for the first time.  
-b. On your phone or computer, open **Wi-Fi settings**, find and connect to the hotspot **`Xiaozhi-6BF1`**.  
+b. On your phone or computer, open **Wi-Fi settings**, find and connect to the hotspot **`Xiaozhi-E985`**.  
 
 ![wifi_settings](2.assets/wifi_settings.jpg)
 
@@ -192,6 +192,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
