@@ -4,6 +4,17 @@
 
 This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, protocol hacking exploration, DIY hardware expansion, desktop gadget integration, **open-source SDK**, and more.  **Built for makers and hackers**, it is designed to be a powerful yet easy-to-use development **platform**.
 
+--
+## 🎉 Coming Soon: MeowKit!
+
+Get ready! Our **MeowKit — Versatile Device for Makers** is almost here.  
+
+🚀 Stay tuned and support us on **Kickstarter**:  
+[MeowKit on Kickstarter](https://www.kickstarter.com/projects/1915038505/meowkit-versatile-device-for-makers)  
+
+🥳 Let's celebrate the launch together! 🎊
+
+
 ![Apps](2.assets/apps.png)
 
 ### Unboxing
@@ -181,6 +192,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
