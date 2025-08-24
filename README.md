@@ -104,10 +104,12 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 ![Getting Started](2.assets/get_start.png)
 
 1. **Power on**: Press and hold the power button for 3 seconds.  
-2. **Initialize BSP**: On first boot, follow the on-screen prompt to press the **A/B buttons** (display shows *“bsp init done”*).  
-3. **Enter main interface**: MeowKit will automatically boot into the **main interface**.  
-4. **Open an app**: Go to the **Apps Menu**, tap an **icon** to launch an app.  
-5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**.  
+2. **Initialize BSP**: On first boot, follow the on-screen prompt to press the **A/B buttons** (display shows *“bsp init done”*).
+   ![bsp_init](2.assets/bsp_init.png) 
+4. **Enter main interface**: MeowKit will automatically boot into the **main interface**.  
+5. **Open an app**: Go to the **Apps Menu**, tap an **icon** to launch an app.
+   ![apps_menu](2.assets/apps_menu.png)   
+7. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**.  
 
 --- 
 #### AI Chat&MCP
@@ -120,6 +122,7 @@ It integrates large language models (LLMs) such as Qwen, DeepSeek, and ChatGPT, 
 
 a. After flashing and rebooting the device, **MeowKit** will enter the **Wi-Fi Configuration Page** for the first time.  
 b. On your phone or computer, open **Wi-Fi settings**, find and connect to the hotspot **`Xiaozhi-6BF1`**.  
+![wifi_settings](2.assets/wifi_settings.png)
 c. It will automatically redirect (or you can manually open):  
    👉 [http://192.168.4.1](http://192.168.4.1)  
 d. Select your Wi-Fi network on the page and enter the password.  
@@ -127,11 +130,12 @@ d. Select your Wi-Fi network on the page and enter the password.
 ![wlan](2.assets/wlan.png)
 
 #### 2. Successful Network Connection
-
-- The device will **play a machine code** and display it on the screen.  
+![machine_code](2.assets/machine_code.png)
+- The device will **play a machine code** and display it on the screen.
+  
 - Open your browser and visit 👉 [https://xiaozhi.me/](https://xiaozhi.me/)  
 - Enter the displayed **machine code** to bind your device with the AI agent.
-
+![add_devices](2.assets/add_devices.png)
 #### 3. Personalization
 
 On the [xiaozhi.me](https://xiaozhi.me/) platform, you can customize:  
@@ -139,7 +143,9 @@ On the [xiaozhi.me](https://xiaozhi.me/) platform, you can customize:
 - **Voice**  
 - **Memory**  
 - **Interaction preferences**  
-Click **Save** to apply the settings.  
+Click **Save** to apply the settings.
+
+![config_role](2.assets/config_role.png)
 
 #### 4. Getting Started
 
@@ -168,6 +174,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
