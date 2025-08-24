@@ -104,12 +104,18 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 ![Getting Started](2.assets/get_start.png)
 
 1. **Power on**: Press and hold the power button for 3 seconds.  
-2. **Initialize BSP**: On first boot, follow the on-screen prompt to press the **A/B buttons** (display shows *“bsp init done”*).
-   ![bsp_init](2.assets/bsp_init.png) 
-4. **Enter main interface**: MeowKit will automatically boot into the **main interface**.  
-5. **Open an app**: Go to the **Apps Menu**, tap an **icon** to launch an app.
-   ![apps_menu](2.assets/apps_menu.png)   
-7. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**.  
+
+2. **Initialize BSP**: On first boot, follow the on-screen prompt to press the **A/B buttons** (display shows *“bsp init done”*).  
+
+   ![BSP Initialization](2.assets/bsp_init.png)
+
+3. **Enter main interface**: MeowKit will automatically boot into the **main interface**.  
+
+4. **Open an app**: Go to the **Apps Menu**, tap an **icon** to launch an app.  
+
+   ![Apps Menu](2.assets/apps_menu.png)
+
+5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**. 
 
 --- 
 #### AI Chat&MCP
@@ -174,6 +180,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
