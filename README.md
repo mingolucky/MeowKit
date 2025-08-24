@@ -147,7 +147,7 @@ b. On your phone or computer, open **Wi-Fi settings**, find and connect to the h
 c. It will automatically redirect (or you can manually open):  👉 [http://192.168.4.1](http://192.168.4.1)  
 d. Select your Wi-Fi network on the page and enter the password.  
 
-![wlan](2.assets/wlan.png)
+![wlan](2.assets/wlan.jpg)
 
 #### 2. Successful Network Connection
 ![machine_code](2.assets/machine_code.jpg)
@@ -194,6 +194,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
