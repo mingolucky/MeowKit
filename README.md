@@ -74,6 +74,10 @@ When you first receive the package carefully prepared and shipped by the MeowKit
    - The **Connect** menu will switch to **Disconnect**, confirming a successful COM connection.  
 
 5. **Select firmware files and set flash addresses**
+  ##### ⚠️ Firmware Notice
+
+The **AI Chat & MCP firmware** is different from the **Hacker Protocol & Desktop Gadgets firmware**.  
+To experience AI Chat & MCP features, you need to **re-flash the device with the corresponding firmware**.
 
    **Hacker Protocol & Desktop Gadgets firmware**
     ![FLASH](2.assets/flash_1.png)
@@ -93,7 +97,7 @@ When you first receive the package carefully prepared and shipped by the MeowKit
      - `xiaozhi.bin` → `0x100000`  
    - Click **Program** to start flashing.  
 
-7. **Monitor flashing progress**  
+6. **Monitor flashing progress**  
    - During flashing, the browser will switch to the **Console** view and display progress.  
    - Once you see:  
      ```
@@ -102,7 +106,7 @@ When you first receive the package carefully prepared and shipped by the MeowKit
      ```
      the flashing is successfully finished.  
 
-8. **Restart the device**  
+7. **Restart the device**  
    - The device does not reboot automatically after flashing.  
    - Click the **Reset Device** button on the webpage, then click **Confirm** to reboot and run the newly flashed firmware.  
 
@@ -194,6 +198,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
