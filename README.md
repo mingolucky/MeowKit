@@ -25,10 +25,10 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 
 #### Possible Issues & Solutions
 
-##### a. Black powder
-- The black powder comes from laser-cut honeycomb cardboard edges; it is harmless.  
-  - Avoid direct contact with the cardboard edges.  
-  - If your hands get dusty, wash them before handling the device.  
+##### a. Laser char
+- The black residue on the edges of the laser-cut honeycomb cardboard is harmless.  
+  - Avoid direct contact with the cut edges.  
+  - If any dust gets on your hands, simply wash them before handling the device. 
 
 ##### b. Shipping and handling
 - During transport, the battery may be discharged or the back cover may become loose.  
@@ -168,6 +168,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
