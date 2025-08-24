@@ -107,13 +107,13 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 
 2. **Initialize BSP**: On first boot, follow the on-screen prompt to press the **A/B buttons** (display shows *“bsp init done”*).  
 
-   ![BSP Initialization](2.assets/bsp_init.png)
+   ![BSP Initialization](2.assets/bsp_init.jpg)
 
 3. **Enter main interface**: MeowKit will automatically boot into the **main interface**.  
 
 4. **Open an app**: Go to the **Apps Menu**, tap an **icon** to launch an app.  
 
-   ![Apps Menu](2.assets/apps_menu.png)
+   ![Apps Menu](2.assets/apps_menu.jpg)
 
 5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**. 
 
@@ -128,15 +128,16 @@ It integrates large language models (LLMs) such as Qwen, DeepSeek, and ChatGPT, 
 
 a. After flashing and rebooting the device, **MeowKit** will enter the **Wi-Fi Configuration Page** for the first time.  
 b. On your phone or computer, open **Wi-Fi settings**, find and connect to the hotspot **`Xiaozhi-6BF1`**.  
-![wifi_settings](2.assets/wifi_settings.png)
-c. It will automatically redirect (or you can manually open):  
-   👉 [http://192.168.4.1](http://192.168.4.1)  
+
+![wifi_settings](2.assets/wifi_settings.jpg)
+
+c. It will automatically redirect (or you can manually open):  👉 [http://192.168.4.1](http://192.168.4.1)  
 d. Select your Wi-Fi network on the page and enter the password.  
 
 ![wlan](2.assets/wlan.png)
 
 #### 2. Successful Network Connection
-![machine_code](2.assets/machine_code.png)
+![machine_code](2.assets/machine_code.jpg)
 - The device will **play a machine code** and display it on the screen.
   
 - Open your browser and visit 👉 [https://xiaozhi.me/](https://xiaozhi.me/)  
@@ -180,6 +181,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
