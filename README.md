@@ -76,15 +76,15 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 5. **Select firmware files and set flash addresses**
   ##### ⚠️ Firmware Notice
 
-The **AI Chat & MCP firmware** is different from the **Hacker Protocol & Desktop Gadgets firmware**.  
+The **AI Chat & MCP firmware** is different from the **MeowKit firmware**.  
 To experience AI Chat & MCP features, you need to **re-flash the device with the corresponding firmware**.
 
-   **Hacker Protocol & Desktop Gadgets firmware**
+   **MeowKit firmware**
     ![FLASH](2.assets/flash_1.png)
    - Click **Selected file and flash address**, then add:  
      - `bootloader.bin` → `0x0`  
      - `partitions.bin` → `0x8000`  
-     - `meowkit.bin` → `0x10000`  
+     - `firmware.bin` → `0x10000`  
    - Click **Program** to start flashing.  
 
    **AI Chat & MCP firmware**
@@ -112,11 +112,11 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 
 ---
 
-### MeowKit Getting Started Guide
+### Getting Started Guide
 
 ---
 
-#### Hacker Protocol&Desktop Gadgets
+#### MeowKit
 
 ![Getting Started](2.assets/get_start.png)
 
@@ -198,15 +198,3 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
-
-
-
-
-
-
-
-
-
-
-
-
