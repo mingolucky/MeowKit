@@ -408,7 +408,8 @@ If you're a fan of **The Matrix** and want to bring Neo's virtual world to your 
 
 
 #### Hardware Specifications
-*(To be added)*
+
+![hardware](2.assets/hardware.png)
 
 ---
 
@@ -418,6 +419,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
