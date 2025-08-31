@@ -135,7 +135,9 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**.
 
 #### Graphical Interaction & UI
-【】
+
+  ![graphical_interaction&ui](2.assets/graphical_interaction&ui.jpg)
+    
 ##### Interface Structure
 Main interfaces include:
 - **Home**
@@ -414,4 +416,5 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
