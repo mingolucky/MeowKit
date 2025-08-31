@@ -132,7 +132,46 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 
    ![Apps Menu](2.assets/apps_menu.jpg)
 
-5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**. 
+5. **Exit an app**: Long-press the **B button** to exit and return to the **Apps Menu**.
+
+#### Graphical Interaction & UI
+【】
+##### Interface Structure
+Main interfaces include:
+- **Home**
+- **Clock**
+- **SD Card**
+- **Control Center**
+- **Apps Menu**
+
+---
+
+##### Touch Gesture Operations
+- **Swipe in four directions**: Navigate between different interfaces.  
+  - **Swipe Right**: Enter **Clock** interface.  
+  - **Swipe Left**: Return to **Home** interface.  
+  - **Swipe Up / Down**: Switch to other related interfaces (e.g., **Apps Menu** or **Control Center**).  
+
+---
+
+##### Physical Button Operations
+- **A Button**:  
+  - Single click: Return to **Home** interface.  
+- **B Button**:  
+  - Single click: Go back one level in the **SD Card** directory.  
+
+---
+
+##### App Operations
+- In the **Apps Menu**, tap the **App Icon** to launch the application.  
+- **Long press B button (2s)**: Exit the current app and return to **Apps Menu**.  
+
+---
+
+##### Multi-Function Buttons
+- **A and B buttons** support **single click**, **double click**, and **long press**,  
+  allowing each app to adapt different control logic.  
+
 
 --- 
 #### AI Chat&MCP
@@ -178,14 +217,191 @@ Now you can start talking to it!
 
 ---
 
-#### Interface Guide
+#### BLE BEACON
 
-The graphical interface includes a clock, home screen, app menu, SD-card file manager, and control center.  
-With SD-card file management (littleFS) and the Mooncake multi-app management and scheduling framework for microcontrollers (by Forairaaaaa), you can easily build and add your own applications.
+A **BLE (Bluetooth Low Energy) Beacon** is a device or software that continuously broadcasts customizable BLE advertising packets to nearby devices.  
 
-![UI](2.assets/ui.png)
+These packets can interact with native system features on major platforms, including:  
+- **iOS/iPadOS**: Spoofing Nearby Actions modals and Proximity Pair popups, potentially triggering system responses such as pairing prompts or, in some cases, system instability (e.g., crashes on iOS 17 for iPhone 12 or newer).  
+- **Android**: Triggering Google Fast Pair or Samsung Easy Pair interfaces to initiate seamless device discovery and pairing.  
+- **Windows**: Interfacing with Microsoft Swift Pair for quick Bluetooth device connections.  
+
+This functionality is commonly used for **“popup attacks”**, where devices instantly broadcast crafted advertising packets to induce system-level prompts for pairing or connection. While this demonstrates the capabilities of BLE communication and device discovery protocols, it can also expose security considerations in automated or unexpected device interactions.  
+
+In practice, BLE Beacons like this are valuable for:  
+- Rapid device provisioning and testing.  
+- Security research on Bluetooth pairing protocols.  
+- Developing custom pairing workflows for IoT, peripherals, or embedded devices.  
 
 ---
+
+#### WiFi Spam
+
+A versatile wireless testing tool designed to interact with Wi-Fi networks in multiple advanced ways:  
+
+- **Custom SSID Broadcasting**: Instantly creates up to a thousand Wi-Fi access points with configurable SSIDs, allowing for large-scale network simulation, stress testing, or UX experimentation.  
+- **Deauthentication Monitoring**: Continuously monitors for Wi-Fi deauthentication attacks, enabling the detection of malicious attempts to disconnect clients from networks.  
+- **Extended Network Scanning**: Lists nearby Wi-Fi networks with detailed information including SSID, BSSID, signal strength, channel, encryption type, and additional extended parameters.  
+
+This module is primarily intended for **network research, security testing, and educational purposes**, providing engineers, researchers, and makers with the ability to explore Wi-Fi behavior, test client interactions, and study wireless protocol responses in controlled environments.  
+
+---
+
+#### BadUSB
+
+Launch computer-security attacks using a malware-laden USB device.  
+**MeowKit** can emulate USB device-mode peripherals so your computer recognizes it as a standard input device — think **HID keyboard** or **Ethernet adapter** — just like a **USB Rubber Ducky**.  
+
+You can script custom keyboard payloads to send any keystroke sequence and even fuzz-test the USB stack on target devices.  
+
+**a. Connection & Setup**  
+i. Connect **Windows** and **MeowKit** using a USB cable.  
+ii. Set the keyboard layout in Windows to **English (US)**.  
+
+**b. Script Selection**  
+i. **B Single Click**: Switch to the next script.  
+ii. **B Double Click**: Switch to the previous script.  
+iii. Scripts are stored in the **badusb** folder on the SD card.  
+
+**c. Script Execution**  
+i. **A Single Click**: Start / Resume the current script.  
+ii. **A Double Click**: Restart the current script.  
+
+**d. Exit Application**  
+i. **Long Press B**: Exit the **BadUSB** app and return to the main menu.
+
+---
+
+#### PC Monitor
+
+**Real-Time Monitoring**: Displays CPU/GPU temperatures, loads, and system RAM usage.  
+
+**a. Operating Systems**  
+Compatible with Windows 7, 10, and 11 (64-bit).  
+Download installer: [https://github.com/koogar/HardwareSerialMonitor](https://github.com/koogar/HardwareSerialMonitor)  
+
+**b. Run as Administrator**  
+i. Locate **HardwareSerialMonitor.exe**  
+ii. Right-click → **Properties** → **Compatibility** tab  
+iii. Check **“Run this program as an administrator”**  
+
+**c. Launch PC Monitor**  
+i. Click the **PC Monitor** icon  
+ii. Wait a few seconds for the data to refresh  
+
+---
+
+#### GAME
+
+This game is a slight remake for the ESPboy handheld of the famous **Dinosaur Game**, also known as **Chrome Dino**, a browser game developed by Google and built into the Google Chrome web browser.  
+
+The player guides a pixelated Tyrannosaurus Rex across a side-scrolling landscape, avoiding obstacles to achieve a higher score. The game was created by members of the Chrome UX team in 2014.  
+
+---
+
+**Dino is a runner game:**  
+a. Just tap the screen to jump and try to achieve the highest score.  
+b. Hold the **[B]** button to exit the game. 
+
+---
+
+#### Retro-TV
+
+Ever wished your gadget could turn into a tiny retro TV? With **Retro-TV**, MeowKit becomes a pocket-sized screen that streams your computer display in real time.  
+Think of it as a mini companion monitor—perfect for showing off pixel art, retro games, or just having fun with a second screen on your desk.  
+
+##### On Computer
+a. Disable **Windows Defender** (turn **Real-time Protection OFF**).  
+b. Download **ScreenShotSender** (Windows only).  
+c. Run **ScreenShotSender.exe**.  
+d. Enter MeowKit’s IP address, then configure:  
+   - Width = 320  
+   - Height = 240  
+   - Quality = 60  
+   - Box area (optional)  
+e. Click **Connect**, and the live screen will show up on MeowKit.  
+
+##### On MeowKit
+a. Finish Wi-Fi setup and exit **Settings**.  
+b. Tap the **Retro-TV** icon → shows *Connect to WiFi...*  
+c. Once connected, it displays your **IP Address** (e.g., `10.0.1.135`).  
+d. **Long press B button (2s)** to exit.  
+
+---
+
+#### Air Mouse
+
+Using the **QMI8658 gyroscope**, angular velocity on the Z/X axes is integrated to calculate angular changes, which are mapped to X/Y cursor movements.  
+Meanwhile, the **A button** and **B button** are mapped to left and right mouse clicks, transforming the device into a wireless air mouse.  
+
+---
+
+##### Windows Setup
+a. Go to **Windows → Settings → Devices → Bluetooth & other devices**  
+b. Click **“Add Bluetooth or other device”**  
+c. Select **“MeowKit Mouse”**  
+d. Status shows **Paired**  
+
+---
+
+##### MeowKit Device
+a. Device screen shows:  
+   - *Air Mouse starting*  
+   - *IMU ready*  
+   - *BLE mouse ready*  
+   - *Status: Running*  
+   - **A**: Left Click  
+   - **B**: Right Click  
+   - **BLE**: Connected  
+
+b. **Hold the [B] button for 2 seconds** to exit  
+
+---
+
+#### Music
+
+By scanning MP3 files in the **/music** folder using **SD_MMC**, and combining the **ES8311 codec** with **I2S streaming audio playback**, we implemented a complete audio playback system.  
+Audio files are read from the SD card and output as high-quality audio signals through I2S using the **audioI2S** library.  
+
+---
+
+##### Interaction Logic
+a. Upon entry, it does not play automatically.  
+   - **A Single Click**: Start playback  
+   - **A Double Click**: Pause playback  
+   - **A Single Click after pausing**: Resume playback  
+
+b. **B Button**  
+   - Single Click: Play the next track  
+   - Double Click: Play the previous track  
+   - If playback is already started, the target track will play automatically  
+
+c. End of track behavior:  
+   - When a track finishes, it will automatically switch to the next track and continue playback.  
+   - **Long Press B**: Exit the Music app  
+
+---
+
+#### VU Meter
+
+A real-time VU Meter that captures audio, processes it with digital filtering and smoothing, and displays sound levels with a dynamic needle.  
+Features include silence detection and a modular design for easy integration.  
+
+---
+
+##### MeowKit Device
+a. When the VU Meter app starts, the needle performs a self-test sweep between **-60° and +60°**.  
+b. It then switches to real-time audio capture and level display.  
+c. Press and hold the **B button** for 2 seconds to exit the app.  
+
+---
+
+#### Digital Rain
+
+If you're a fan of **The Matrix** and want to bring Neo's virtual world to your device, **Clockology** offers a Matrix-style watch face designed by *Andrea Brex*, perfectly showcasing the iconic **digital rain** effect from the movie.  
+
+---
+
 
 #### Hardware Specifications
 *(To be added)*
@@ -198,3 +414,4 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
