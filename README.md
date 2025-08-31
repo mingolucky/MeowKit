@@ -291,8 +291,6 @@ iii. Check **“Run this program as an administrator”**
 i. Click the **PC Monitor** icon  
 ii. Wait a few seconds for the data to refresh  
 
-[▶ 点击观看演示视频](2.asset/pc_monitor.mp4)
-
 ---
 
 #### GAME
@@ -301,11 +299,16 @@ This game is a slight remake for the ESPboy handheld of the famous **Dinosaur Ga
 
 The player guides a pixelated Tyrannosaurus Rex across a side-scrolling landscape, avoiding obstacles to achieve a higher score. The game was created by members of the Chrome UX team in 2014.  
 
+![Dino Game Demo](2.assets/dino.gif)
+
+
 ---
 
 **Dino is a runner game:**  
 a. Just tap the screen to jump and try to achieve the highest score.  
 b. Hold the **[B]** button to exit the game. 
+
+![config_role](2.assets/config_role.png)
 
 ---
 
@@ -404,6 +407,8 @@ c. Press and hold the **B button** for 2 seconds to exit the app.
 
 If you're a fan of **The Matrix** and want to bring Neo's virtual world to your device, **Clockology** offers a Matrix-style watch face designed by *Andrea Brex*, perfectly showcasing the iconic **digital rain** effect from the movie.  
 
+![digital_rain](2.assets/digital_rain.gif)
+
 ---
 
 
@@ -418,6 +423,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
