@@ -291,7 +291,7 @@ iii. Check **“Run this program as an administrator”**
 i. Click the **PC Monitor** icon  
 ii. Wait a few seconds for the data to refresh  
 
-[![Watch the video](2.asset/pc_monitor_preview.png)](2.asset/pc_monitor.mp4)
+[▶ 点击观看演示视频](2.asset/pc_monitor.mp4)
 
 ---
 
@@ -418,6 +418,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
