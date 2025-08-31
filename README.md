@@ -235,7 +235,12 @@ In practice, BLE Beacons like this are valuable for:
 - Security research on Bluetooth pairing protocols.  
 - Developing custom pairing workflows for IoT, peripherals, or embedded devices.  
 
-![ble beacon](2.assets/ble_beacon.webp)
+<figure>
+  <img src="2.assets/ble_beacon.webp" alt="BLE BEACON Demo" width="500">
+  <figcaption>
+    Given the 29 devices and the 3 advertisement types, there are a total of 87 unique possible advertisements (ignoring the random source MAC) possible, of which one is broadcast every second.
+  </figcaption>
+</figure>
 
 ---
 
@@ -421,6 +426,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
