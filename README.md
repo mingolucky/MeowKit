@@ -235,12 +235,8 @@ In practice, BLE Beacons like this are valuable for:
 - Security research on Bluetooth pairing protocols.  
 - Developing custom pairing workflows for IoT, peripherals, or embedded devices.  
 
-<figure>
-  <img src="2.assets/ble_beacon.webp" alt="BLE BEACON Demo" width="500">
-  <figcaption>
-    Given the 29 devices and the 3 advertisement types, there are a total of 87 unique possible advertisements (ignoring the random source MAC) possible, of which one is broadcast every second.
-  </figcaption>
-</figure>
+![BLE BEACON Demo](2.assets/ble_beacon.webp)
+Given the 29 devices and the 3 advertisement types, there are a total of 87 unique possible advertisements (ignoring the random source MAC) possible, of which one is broadcast every second.
 
 ---
 
@@ -253,6 +249,9 @@ A versatile wireless testing tool designed to interact with Wi-Fi networks in mu
 - **Extended Network Scanning**: Lists nearby Wi-Fi networks with detailed information including SSID, BSSID, signal strength, channel, encryption type, and additional extended parameters.  
 
 This module is primarily intended for **network research, security testing, and educational purposes**, providing engineers, researchers, and makers with the ability to explore Wi-Fi behavior, test client interactions, and study wireless protocol responses in controlled environments.  
+
+![WiFi Spam Demo](2.assets/wifi_spam.webp)
+In reality though, it is just advertising these network names without actually creating them. So there is no way you could connect to one of the "created" networks.
 
 ---
 
@@ -278,6 +277,9 @@ ii. **A Double Click**: Restart the current script.
 
 **d. Exit Application**  
 i. **Long Press B**: Exit the **BadUSB** app and return to the main menu.
+
+![BadUSB Demo](2.assets/badusb.webp)
+The script on the target laptop automatically typed out an ASCII-encoded cat
 
 ---
 
@@ -336,6 +338,9 @@ b. Tap the **Retro-TV** icon → shows *Connect to WiFi...*
 c. Once connected, it displays your **IP Address** (e.g., `10.0.1.135`).  
 d. **Long press B button (2s)** to exit.  
 
+![Retro-TV Demo](2.assets/retro_tv.webp)
+It’s now reborn as an adorable wireless‑casting mini Retro-TV
+
 ---
 
 #### Air Mouse
@@ -364,6 +369,9 @@ a. Device screen shows:
    - **BLE**: Connected  
 
 b. **Hold the [B] button for 2 seconds** to exit  
+
+![Air Mouse Demo](2.assets/air_mouse.webp)
+Remotely operate the 3D model rotation preview of mechanical drawing
 
 ---
 
@@ -426,6 +434,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
