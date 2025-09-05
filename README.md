@@ -323,7 +323,7 @@ Think of it as a mini companion monitor—perfect for showing off pixel art, ret
 
 ##### On Computer
 a. Disable **Windows Defender** (turn **Real-time Protection OFF**).  
-b. Download **ScreenShotSender** (Windows only).  
+b. Download [**ScreenShotSender**](https://github.com/lovyan03/ESP32_ScreenShotReceiver) (Windows only).  
 c. Run **ScreenShotSender.exe**.  
 d. Enter MeowKit’s IP address, then configure:  
    - Width = 320  
@@ -434,6 +434,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
