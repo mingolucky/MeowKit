@@ -289,7 +289,7 @@ The script on the target laptop automatically typed out an ASCII-encoded cat
 
 **a. Operating Systems**  
 Compatible with Windows 7, 10, and 11 (64-bit).  
-Download installer: [https://github.com/koogar/HardwareSerialMonitor](https://github.com/koogar/HardwareSerialMonitor)  
+Download installer: [[https://github.com/koogar/HardwareSerialMonitor](https://github.com/koogar/HardwareSerialMonitor)  ](https://github.com/koogar/HardwareSerialMonitor/releases/download/V1.4.4/HSM_Setup_v1.4.4.0.9.6.1.exe)
 
 **b. Run as Administrator**  
 i. Locate **HardwareSerialMonitor.exe**  
@@ -434,6 +434,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
