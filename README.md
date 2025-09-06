@@ -4,7 +4,6 @@
 
 This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, protocol hacking exploration, DIY hardware expansion, desktop gadget integration, **open-source SDK**, and more.  **Built for makers and hackers**, it is designed to be a powerful yet easy-to-use development **platform**.
 
---
 ## 🎉 Coming Soon: MeowKit!
 
 Get ready! Our **MeowKit — Versatile Device for Makers** is almost here.  
@@ -12,10 +11,7 @@ Get ready! Our **MeowKit — Versatile Device for Makers** is almost here.
 🚀 Stay tuned and support us on **Kickstarter**:  
 [MeowKit on Kickstarter](https://www.kickstarter.com/projects/1915038505/meowkit-versatile-device-for-makers)  
 
-🥳 Let's celebrate the launch together! 🎊
-
-
-![Apps](2.assets/apps.png)
+🥳 Let's celebrate the launch together! 
 
 ### Unboxing
 
@@ -23,16 +19,17 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 
 #### 📦 Package Contents
 
-| #  | Item                      | Description/Notes    |
-|----|---------------------------|----------------------|
-| 1  | **MeowKit**               | Main device          |
-| 2  | **Lanyard**               | Wrist/neck strap     |
-| 3  | **Micro SD Card**         | Lexar 32GB           |
-| 4  | **Card Reader**           |                      |
-| 5  | **USB Type-C Cable**      |                      |
-| 6  | **Leather USB Cable Tie** |                      |
-| 7  | **Postcard**              |                      |
-| 8  | **Breadboard Jumper Wires** | For prototyping    |
+| # | Item                        | Description/Notes |
+| - | --------------------------- | ----------------- |
+| 1 | **MeowKit**                 | Main device       |
+| 2 | **Lanyard**                 | Wrist/neck strap  |
+| 3 | **Micro SD Card**           | Lexar 32GB        |
+| 4 | **Card Reader**             |                   |
+| 5 | **USB Type-C Cable**        |                   |
+| 6 | **Leather USB Cable Tie**   |                   |
+| 7 | **Postcard**                |                   |
+| 8 | **Breadboard Jumper Wires** | For machine forced reset   |
+
 
 #### Possible Issues & Solutions
 
@@ -112,7 +109,7 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 
 ---
 
-### Getting Started Guide
+### Hands-On Experience
 
 ---
 
@@ -221,64 +218,50 @@ Now you can start talking to it!
 
 #### BLE BEACON
 
-A **BLE (Bluetooth Low Energy) Beacon** is a device or software that continuously broadcasts customizable BLE advertising packets to nearby devices.  
-
-These packets can interact with native system features on major platforms, including:  
-- **iOS/iPadOS**: Spoofing Nearby Actions modals and Proximity Pair popups, potentially triggering system responses such as pairing prompts or, in some cases, system instability (e.g., crashes on iOS 17 for iPhone 12 or newer).  
-- **Android**: Triggering Google Fast Pair or Samsung Easy Pair interfaces to initiate seamless device discovery and pairing.  
-- **Windows**: Interfacing with Microsoft Swift Pair for quick Bluetooth device connections.  
-
-This functionality is commonly used for **“popup attacks”**, where devices instantly broadcast crafted advertising packets to induce system-level prompts for pairing or connection. While this demonstrates the capabilities of BLE communication and device discovery protocols, it can also expose security considerations in automated or unexpected device interactions.  
-
-In practice, BLE Beacons like this are valuable for:  
-- Rapid device provisioning and testing.  
-- Security research on Bluetooth pairing protocols.  
-- Developing custom pairing workflows for IoT, peripherals, or embedded devices.  
+Custom BLE advertising packets can trigger native pairing or connection pop-ups on iOS, Android, and Windows devices—commonly known as a “popup attack.” For example, it can spoof Nearby Actions modals and Proximity Pair pop-ups on iOS and iPadOS, effectively simulating native system dialogs.  
 
 ![BLE BEACON Demo](2.assets/ble_beacon.webp)
+
 Given the 29 devices and the 3 advertisement types, there are a total of 87 unique possible advertisements (ignoring the random source MAC) possible, of which one is broadcast every second.
 
 ---
 
 #### WiFi Spam
 
-A versatile wireless testing tool designed to interact with Wi-Fi networks in multiple advanced ways:  
-
-- **Custom SSID Broadcasting**: Instantly creates up to a thousand Wi-Fi access points with configurable SSIDs, allowing for large-scale network simulation, stress testing, or UX experimentation.  
-- **Deauthentication Monitoring**: Continuously monitors for Wi-Fi deauthentication attacks, enabling the detection of malicious attempts to disconnect clients from networks.  
-- **Extended Network Scanning**: Lists nearby Wi-Fi networks with detailed information including SSID, BSSID, signal strength, channel, encryption type, and additional extended parameters.  
-
-This module is primarily intended for **network research, security testing, and educational purposes**, providing engineers, researchers, and makers with the ability to explore Wi-Fi behavior, test client interactions, and study wireless protocol responses in controlled environments.  
+Provides an efficient and powerful toolkit for wireless security research, penetration testing, and network environment assessment.
+- Broadcast fake SSIDs – Creates up to a thousand WiFi access points with custom SSIDs.
+- Wi-Fi Deauthentication Attack - Send deauthentication frames to disrupt client connections.
+- Wi-Fi Scanner – List nearby Wi-Fi networks with extended details.
 
 ![WiFi Spam Demo](2.assets/wifi_spam.webp)
+
 In reality though, it is just advertising these network names without actually creating them. So there is no way you could connect to one of the "created" networks.
 
 ---
 
 #### BadUSB
 
-Launch computer-security attacks using a malware-laden USB device.  
-**MeowKit** can emulate USB device-mode peripherals so your computer recognizes it as a standard input device — think **HID keyboard** or **Ethernet adapter** — just like a **USB Rubber Ducky**.  
+Launch computer‑security attacks using a malware‑laden USB device. MeowKit can emulate USB device‑mode peripherals so your computer recognizes it as a standard input device—think HID keyboard or Ethernet adapter—just like a USB Rubber Ducky. You can script custom keyboard payloads to send any keystroke sequence and even fuzz‑test the USB stack on target devices.
 
-You can script custom keyboard payloads to send any keystroke sequence and even fuzz-test the USB stack on target devices.  
+1. **Connection & Preparation**  
+   a. Connect MeowKit to your computer using a USB cable.  
+   b. Copy `.txt` script files into the `/badusb/` folder on the device, or use the built-in SD card sample files from the firmware.  
+   c. On Windows, set the keyboard layout to **English (US)**.
 
-**a. Connection & Setup**  
-i. Connect **Windows** and **MeowKit** using a USB cable.  
-ii. Set the keyboard layout in Windows to **English (US)**.  
+2. **Script Selection**  
+   - **B Single Click**: Switch to the next script.  
+   - **B Double Click**: Switch to the previous script.  
+   📂 **Script source**: `/badusb/` folder on the SD card.
 
-**b. Script Selection**  
-i. **B Single Click**: Switch to the next script.  
-ii. **B Double Click**: Switch to the previous script.  
-iii. Scripts are stored in the **badusb** folder on the SD card.  
+3. **Script Execution**  
+   - **A Single Click**: Start or continue executing the current script.  
+   - **A Double Click**: Restart the current script.
 
-**c. Script Execution**  
-i. **A Single Click**: Start / Resume the current script.  
-ii. **A Double Click**: Restart the current script.  
-
-**d. Exit Application**  
-i. **Long Press B**: Exit the **BadUSB** app and return to the main menu.
+4. **Exit Application**  
+   - **B Long Press**: Exit the BadUSB app and return to the main menu.
 
 ![BadUSB Demo](2.assets/badusb.webp)
+
 The script on the target laptop automatically typed out an ASCII-encoded cat
 
 ---
@@ -287,18 +270,21 @@ The script on the target laptop automatically typed out an ASCII-encoded cat
 
 **Real-Time Monitoring**: Displays CPU/GPU temperatures, loads, and system RAM usage.  
 
-**a. Operating Systems**  
-Compatible with Windows 7, 10, and 11 (64-bit).  
-Download installer: [[https://github.com/koogar/HardwareSerialMonitor](https://github.com/koogar/HardwareSerialMonitor)  ](https://github.com/koogar/HardwareSerialMonitor/releases/download/V1.4.4/HSM_Setup_v1.4.4.0.9.6.1.exe)
+[pc_monitor]
 
-**b. Run as Administrator**  
-i. Locate **HardwareSerialMonitor.exe**  
-ii. Right-click → **Properties** → **Compatibility** tab  
-iii. Check **“Run this program as an administrator”**  
+1. **Operating Systems**: Compatible with Windows 7, 10, and 11 (64-bit)  
+   Download the installer from [this link](https://github.com/koogar/HardwareSerialMonitor/releases/download/V1.4.4/HSM_Setup_v1.4.4.0.9.6.1.exe) and click to install.
 
-**c. Launch PC Monitor**  
-i. Click the **PC Monitor** icon  
-ii. Wait a few seconds for the data to refresh  
+2. **Run as Administrator**  
+   a. Locate `HardwareSerialMonitor.exe`  
+   b. Right-click → **Properties** → **Compatibility** tab  
+   c. Check **“Run this program as an administrator”**  
+   d. Automatically or manually select the COM port
+
+3. **Launch PC Monitor**  
+   a. Click the **PC Monitor** icon  
+   b. Wait a few seconds for the data to refresh
+ 
 
 ---
 
@@ -339,6 +325,7 @@ c. Once connected, it displays your **IP Address** (e.g., `10.0.1.135`).
 d. **Long press B button (2s)** to exit.  
 
 ![Retro-TV Demo](2.assets/retro_tv.webp)
+
 It’s now reborn as an adorable wireless‑casting mini Retro-TV
 
 ---
@@ -347,8 +334,6 @@ It’s now reborn as an adorable wireless‑casting mini Retro-TV
 
 Using the **QMI8658 gyroscope**, angular velocity on the Z/X axes is integrated to calculate angular changes, which are mapped to X/Y cursor movements.  
 Meanwhile, the **A button** and **B button** are mapped to left and right mouse clicks, transforming the device into a wireless air mouse.  
-
----
 
 ##### Windows Setup
 a. Go to **Windows → Settings → Devices → Bluetooth & other devices**  
@@ -380,22 +365,21 @@ Remotely operate the 3D model rotation preview of mechanical drawing
 By scanning MP3 files in the **/music** folder using **SD_MMC**, and combining the **ES8311 codec** with **I2S streaming audio playback**, we implemented a complete audio playback system.  
 Audio files are read from the SD card and output as high-quality audio signals through I2S using the **audioI2S** library.  
 
----
-
 ##### Interaction Logic
-a. Upon entry, it does not play automatically.  
+
+1. Upon entry, it does not play automatically.  
    - **A Single Click**: Start playback  
    - **A Double Click**: Pause playback  
    - **A Single Click after pausing**: Resume playback  
 
-b. **B Button**  
+2. **B Button**  
    - Single Click: Play the next track  
    - Double Click: Play the previous track  
    - If playback is already started, the target track will play automatically  
 
-c. End of track behavior:  
+3. **End of Track Behavior**  
    - When a track finishes, it will automatically switch to the next track and continue playback.  
-   - **Long Press B**: Exit the Music app  
+   - **Long Press B**: Exit the Music app
 
 ---
 
@@ -403,8 +387,6 @@ c. End of track behavior:
 
 A real-time VU Meter that captures audio, processes it with digital filtering and smoothing, and displays sound levels with a dynamic needle.  
 Features include silence detection and a modular design for easy integration.  
-
----
 
 ##### MeowKit Device
 a. When the VU Meter app starts, the needle performs a self-test sweep between **-60° and +60°**.  
@@ -434,6 +416,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
