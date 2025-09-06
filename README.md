@@ -281,6 +281,8 @@ The script on the target laptop automatically typed out an ASCII-encoded cat
    c. Check **“Run this program as an administrator”**  
    d. Automatically or manually select the COM port
 
+![hardware_serial_monitor](2.assets/hardware_serial_monitorr.png)
+
 3. **Launch PC Monitor**  
    a. Click the **PC Monitor** icon  
    b. Wait a few seconds for the data to refresh
@@ -418,6 +420,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
