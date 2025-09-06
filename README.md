@@ -113,8 +113,6 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 
 ### Hands-On Experience
 
----
-
 #### MeowKit
 
 ![Getting Started](2.assets/get_start.png)
@@ -272,7 +270,7 @@ The script on the target laptop automatically typed out an ASCII-encoded cat
 
 **Real-Time Monitoring**: Displays CPU/GPU temperatures, loads, and system RAM usage.  
 
-[pc_monitor]
+![pc_monitor](2.assets/pc_monitor.png)
 
 1. **Operating Systems**: Compatible with Windows 7, 10, and 11 (64-bit)  
    Download the installer from [this link](https://github.com/koogar/HardwareSerialMonitor/releases/download/V1.4.4/HSM_Setup_v1.4.4.0.9.6.1.exe) and click to install.
@@ -395,6 +393,8 @@ a. When the VU Meter app starts, the needle performs a self-test sweep between *
 b. It then switches to real-time audio capture and level display.  
 c. Press and hold the **B button** for 2 seconds to exit the app.  
 
+![vu_meter](2.assets/vu_meter.png)
+
 ---
 
 #### Digital Rain
@@ -418,6 +418,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
