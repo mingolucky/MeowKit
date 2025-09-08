@@ -52,7 +52,7 @@ When you first receive the package carefully prepared and shipped by the MeowKit
 ##### Notes
 
 - **Prototype Tolerance and Break-in**  
-  Due to the manufacturing tolerances of the prototype, the buttons may require a break-in period. During initial use, please press the buttons (AB) multiple times. Repeated pressing will gradually increase friction, which helps eliminate gaps and ensures smooth button rebound. This process contributes to the smooth operation of the buttons.
+  <span style="color:red">Due to the manufacturing tolerances of the prototype, the buttons may require a break-in period. During initial use, please press the buttons (AB) multiple times. Repeated pressing will gradually increase friction, which helps eliminate gaps and ensures smooth button rebound. This process contributes to the smooth operation of the buttons.</span>
 
 ---
 
@@ -423,6 +423,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
