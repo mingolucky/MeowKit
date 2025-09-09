@@ -250,7 +250,7 @@ Launch computer‑security attacks using a malware‑laden USB device. MeowKit c
 
 1. **Connection & Preparation**  
    a. Connect MeowKit to your computer using a USB cable.  
-   b. Copy `.txt` script files into the `/badusb/` folder on the device, or use the built-in SD card sample files from the firmware.  
+   b. Copy .txt script files into the /badusb/ folder on the device, or use the built-in SD card sample files from the firmware. You can also use the sample files in 3.sd/badusb/.
    c. On Windows, set the keyboard layout to **English (US)**.
 
 2. **Script Selection**  
@@ -370,6 +370,9 @@ Remotely operate the 3D model rotation preview of mechanical drawing
 By scanning MP3 files in the **/music** folder using **SD_MMC**, and combining the **ES8311 codec** with **I2S streaming audio playback**, we implemented a complete audio playback system.  
 Audio files are read from the SD card and output as high-quality audio signals through I2S using the **audioI2S** library.  
 
+You can also use the sample files in 3.sd/music/ or download sample tracks from tidalwaves.co.za
+.
+
 ##### Interaction Logic
 
 1. Upon entry, it does not play automatically.  
@@ -423,6 +426,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
