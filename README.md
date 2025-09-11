@@ -12,7 +12,9 @@ Get ready! Our **MeowKit — Versatile Device for Makers** is almost here.
 [MeowKit on Kickstarter](https://www.kickstarter.com/projects/1915038505/meowkit-versatile-device-for-makers)  
 
 🥳 Let's celebrate the launch together! 
-The third page contains reserved apps; incorporating community feedback and testing, they will be fully rolled out after the Kickstarter campaign enters mass production.
+> [!NOTE]
+> The third page contains reserved apps; incorporating community feedback and testing, they will be fully rolled out after the Kickstarter campaign enters mass production.
+
 
 ---
 
@@ -427,6 +429,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
