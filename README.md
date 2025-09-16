@@ -256,11 +256,11 @@ Launch computer‑security attacks using a malware‑laden USB device. MeowKit c
    b. Copy `.txt` script files into the device’s **`/badusb/`** folder, or use the built-in SD card sample files from the firmware. You can also use the sample files in **`3.sd/badusb/`**.  
    c. On **Windows**, set the keyboard layout to **English (US)**:  
       i. Open **Settings** → **Time & Language**.  
-         ![Step i]( )  
+         ![Step i](2.assets/badusb 01.png)  
       ii. Select **Language** and click **Add a language**.  
-         ![Step ii]( )  
+         ![Step ii](2.assets/badusb 02.png)  
       iii. Switch the current input method to **English (United States)**, then run the script **`notepad_Meow.txt`**.  
-         ![Step iii]( )
+         ![Step iii](2.assets/badusb 03.png)
 
 2. **Script Selection**  
    - **B Single Click**: Switch to the **next** script.  
@@ -436,6 +436,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
