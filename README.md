@@ -252,21 +252,28 @@ In reality though, it is just advertising these network names without actually c
 Launch computer‑security attacks using a malware‑laden USB device. MeowKit can emulate USB device‑mode peripherals so your computer recognizes it as a standard input device—think HID keyboard or Ethernet adapter—just like a USB Rubber Ducky. You can script custom keyboard payloads to send any keystroke sequence and even fuzz‑test the USB stack on target devices.
 
 1. **Connection & Preparation**  
-   a. Connect MeowKit to your computer using a USB cable.  
-   b. Copy .txt script files into the /badusb/ folder on the device, or use the built-in SD card sample files from the firmware. You can also use the sample files in 3.sd/badusb/.
-   c. On Windows, set the keyboard layout to **English (US)**.
+   a. Connect **MeowKit** to your computer using a USB cable.  
+   b. Copy `.txt` script files into the device’s **`/badusb/`** folder, or use the built-in SD card sample files from the firmware. You can also use the sample files in **`3.sd/badusb/`**.  
+   c. On **Windows**, set the keyboard layout to **English (US)**:  
+      i. Open **Settings** → **Time & Language**.  
+         ![Step i]( )  
+      ii. Select **Language** and click **Add a language**.  
+         ![Step ii]( )  
+      iii. Switch the current input method to **English (United States)**, then run the script **`notepad_Meow.txt`**.  
+         ![Step iii]( )
 
 2. **Script Selection**  
-   - **B Single Click**: Switch to the next script.  
-   - **B Double Click**: Switch to the previous script.  
-   📂 **Script source**: `/badusb/` folder on the SD card.
+   - **B Single Click**: Switch to the **next** script.  
+   - **B Double Click**: Switch to the **previous** script.  
+   📂 **Script source**: **`/badusb/`** folder on the SD card.
 
 3. **Script Execution**  
-   - **A Single Click**: Start or continue executing the current script.  
-   - **A Double Click**: Restart the current script.
+   - **A Single Click**: Start or **resume** the current script.  
+   - **A Double Click**: **Restart** the current script.
 
 4. **Exit Application**  
-   - **B Long Press**: Exit the BadUSB app and return to the main menu.
+   - **B Long Press**: Exit the **BadUSB** app and return to the **main menu**.
+
 
 ![BadUSB Demo](2.assets/badusb.webp)
 
@@ -429,6 +436,7 @@ From the very beginning of this project, we have embraced **openness and transpa
 We believe in open-source, the strength of the community, and the idea that enthusiasts can create amazing projects without the backing of large corporations.  
 
 We warmly invite anyone interested to **contribute, collaborate, and help build MeowKit together!** 🚀
+
 
 
 
