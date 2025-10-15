@@ -36,9 +36,8 @@ void MeowKit::Loop()
 void MeowKit::Destroy()
 {
     if (_device != nullptr)
-        {
-            delete _device;
-            _device = nullptr;
-            /* code */
-        }
+    {
+        delete _device;
+        _device = nullptr;
+    }
 }
