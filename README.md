@@ -40,7 +40,7 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
      - `bootloader.bin` → `0x0`  
      - `partitions.bin` → `0x8000`  
      - `firmware.bin` → `0x10000`  
-   • Click **Program** to start flashing.  
+   - Click **Program** to start flashing.  
 
    **AI Chat & MCP firmware**
    ![FLASH](2.assets/flash_2.png)
@@ -84,3 +84,4 @@ Your support helps bring MeowKit to life — from prototype to production, and i
 By backing the project, you’ll be among the first to experience.
 
 ---
+
