@@ -11,7 +11,7 @@ This is a **pocket-sized multi-tool** device for AI Chat & MCP Control, protocol
 ### 1️⃣ Firmware Update
 
 **a. Download the firmware**  
-• Visit [MeowKit GitHub](https://github.com/happy-mingo/MeowKit) → click **Code** → **Download ZIP**, and save the firmware files to your computer.  
+   • Visit [MeowKit GitHub](https://github.com/happy-mingo/MeowKit) → click **Code** → **Download ZIP**, and save the firmware files to your computer.  
 
 b. **Open the flashing tool**  
    • In your browser, go to: [ESP Launchpad](https://espressif.github.io/esp-launchpad/)  
@@ -81,6 +81,7 @@ Your support helps bring MeowKit to life — from prototype to production, and i
 By backing the project, you’ll be among the first to experience.
 
 ---
+
 
 
 
