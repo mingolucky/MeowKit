@@ -69,6 +69,8 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
 
 ### 2️⃣ Community Documentation
 
+![Hackaday.io](2.assets/hackaday.io.png)
+
 🔗 **[Hackaday.io →](https://hackaday.io/project/204067-meowkit-versatile-device-for-makers)**
 
 We welcome feedback, bug reports, and ideas from the community to make MeowKit even better.  
@@ -84,4 +86,5 @@ Your support helps bring MeowKit to life — from prototype to production, and i
 By backing the project, you’ll be among the first to experience.
 
 ---
+
 
