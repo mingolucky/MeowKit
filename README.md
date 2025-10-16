@@ -1,5 +1,12 @@
 ## Overview
 
+![HEADER](2.assets/header.png)
+
+This is a **pocket-sized multi-tool device** built for makers, hackers, and creative engineers.  
+It enables **AI Chat**, **MCP Control**, **Protocol Hacking Exploration**, **DIY Hardware Expansion**, **Desktop Gadgets**, and **Open-Source SDK Development** — all in one compact platform.
+
+![APPS](2.assets/apps_list.png)
+
 ## Getting Started
 
 ### 1️⃣ Firmware Update
@@ -59,3 +66,4 @@ To experience AI Chat & MCP features, you need to **re-flash the device with the
    - Click the **Reset Device** button on the webpage, then click **Confirm** to reboot and run the newly flashed firmware.  
 
 ### 2️⃣ Community Documentation
+
