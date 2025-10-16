@@ -85,7 +85,6 @@ Your support helps bring MeowKit to life — from prototype to production, and i
 
 By backing the project, you’ll be among the first to experience.
 
-![Kickstarter](2.assets/project we love.png)
+![Kickstarter](2.assets/"project we love.png")
 
 ---
-
