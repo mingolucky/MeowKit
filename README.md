@@ -84,7 +84,5 @@ Your support helps bring MeowKit to life — from prototype to production, and i
 🎯 **[Support MeowKit on Kickstarter →](https://www.kickstarter.com/projects/whitecliff/meowkit-versatile-device-for-makers)**
 
 By backing the project, you’ll be among the first to experience.
-
+![Kickstarte](2.assets/projectwelove.png)
 ---
-
-
