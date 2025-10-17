@@ -5,15 +5,16 @@
 #include <iostream>
 #include "config.h"
 #include "ui_keyboard.h"
-#include <string.h> 
+#include <string.h>
 
 // Simple container to pass WiFi scan items to LVGL async callbacks.
-struct WifiScanItem {
+struct WifiScanItem
+{
     int idx;
-    char* ssid;
+    char *ssid;
 };
 
-static lv_obj_t* file_list = nullptr;
+static lv_obj_t *file_list = nullptr;
 lv_obj_t *ui_WiFi_input_password = nullptr;
 static TaskHandle_t s_wifi_task = nullptr;
 static TaskHandle_t s_btn_a_task = nullptr;
@@ -21,7 +22,7 @@ static TaskHandle_t s_btn_a_task = nullptr;
 void ui_WiFi_keyboard_screen_init(void)
 {
     ui_WiFi_input_password = lv_obj_create(nullptr);
-    lv_obj_clear_flag(ui_WiFi_input_password, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_clear_flag(ui_WiFi_input_password, LV_OBJ_FLAG_SCROLLABLE); /// Flags
     create_3x4_keyboard(ui_WiFi_input_password);
 }
 
@@ -29,12 +30,14 @@ void ui_WiFi_keyboard_screen_init(void)
 static void btn_a_press_lv_cb(void *ud)
 {
     // Respond only when on WiFi interface (double insurance)
-    extern lv_obj_t* ui_Home;
+    extern lv_obj_t *ui_Home;
     extern void ui_Home_screen_init(void);
-    if (lv_scr_act() == ui_WiFi) 
+    if (lv_scr_act() == ui_WiFi)
     {
         lv_indev_wait_release(lv_indev_get_act());
-        _ui_screen_change(&ui_Home, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0, &ui_Home_screen_init);
+        _ui_screen_change(&ui_Control_Center, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0, &ui_Control_Center_screen_init);
+        // task done, delete self
+        s_wifi_task = nullptr;
     }
 }
 
@@ -47,11 +50,11 @@ static void btn_a_monitor_task(void *arg)
     while (true)
     {
         bool pressed = (digitalRead(5) == LOW); // Active low
-        if (pressed && !last_pressed) 
+        if (pressed && !last_pressed)
         {
             // Button pressed edge
             vTaskDelay(pdMS_TO_TICKS(20)); // Simple debounce
-            if (digitalRead(5) == LOW) 
+            if (digitalRead(5) == LOW)
             {
                 // Confirm the press and switch to the main thread to execute the callback
                 lv_async_call(btn_a_press_lv_cb, nullptr);
@@ -63,13 +66,12 @@ static void btn_a_monitor_task(void *arg)
 }
 
 static void sd_folder_enter_event(lv_event_t *e)
-{ 
+{
     lv_event_code_t code = lv_event_get_code(e);
     if (code == LV_EVENT_CLICKED)
     {
         int idx = (int)(intptr_t)lv_event_get_user_data(e);
-        //sd_list_show_folder(idx);
-        std::cout<< "Clicked on WiFi network index: "<< idx << std::endl;
+        std::cout << "Clicked on WiFi network index: " << idx << std::endl;
         wifi_ssid = String(lv_list_get_btn_text(file_list, lv_event_get_target(e)));
         _ui_screen_change(&ui_WiFi_input_password, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_WiFi_keyboard_screen_init);
     }
@@ -77,45 +79,108 @@ static void sd_folder_enter_event(lv_event_t *e)
 
 static void add_wifi_button_async(void *ud)
 {
-    WifiScanItem *it = (WifiScanItem*)ud;
-    if (file_list && it && it->ssid) 
+    WifiScanItem *it = (WifiScanItem *)ud;
+    if (file_list && it && it->ssid)
     {
-        lv_obj_t* btn = lv_list_add_btn(file_list, LV_SYMBOL_DIRECTORY, it->ssid);
-        lv_obj_add_event_cb(btn, sd_folder_enter_event, LV_EVENT_CLICKED, (void*)(intptr_t)it->idx);
+        lv_obj_t *btn = lv_list_add_btn(file_list, LV_SYMBOL_WIFI, it->ssid);
+        lv_obj_add_event_cb(btn, sd_folder_enter_event, LV_EVENT_CLICKED, (void *)(intptr_t)it->idx);
     }
-    if (it) 
+    if (it)
     {
-        if (it->ssid) free(it->ssid);
+        if (it->ssid)
+            free(it->ssid);
         free(it);
     }
 }
 
-static void searchWifi_task(void* arg) 
+// 从 NVS 读取已保存的 SSID/密码
+static bool loadWiFiCredentials(String &out_ssid, String &out_pass)
 {
-       // Ensure the list is cleared before filling
-    if (file_list) {
-        // schedule clear on main thread to be safe
-        lv_async_call([](void*) { if (file_list) lv_obj_clean(file_list); }, nullptr);
+    prefs.begin(PREF_NAMESPACE, false);
+    out_ssid = prefs.getString(KEY_SSID, "");
+    out_pass = prefs.getString(KEY_PASS, "");
+    prefs.end();
+    return out_ssid.length() > 0;
+}
+
+// 如果有保存的凭据则尝试自动连接（返回是否连接成功）
+static bool autoConnectSavedWiFi(int timeoutMs = 5000)
+{
+    String ssid, pass;
+    if (!loadWiFiCredentials(ssid, pass))
+        return false;
+
+    wifi_ssid = ssid; // 更新全局变量（UI 使用）
+    std::cout << "Auto connect: " << ssid.c_str() << std::endl;
+
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_STA);
+    delay(100);
+    WiFi.begin(ssid.c_str(), pass.c_str());
+
+    int waited = 0;
+    const int step = 200;
+    while (WiFi.status() != WL_CONNECTED && waited < timeoutMs)
+    {
+        delay(step);
+        waited += step;
     }
 
-    int networkCount = WiFi.scanNetworks();  // blocking but in background task now
-    if (networkCount <= 0) 
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        std::cout << "Auto-connected to " << ssid.c_str() << std::endl;
+        return true;
+    }
+    else
+    {
+        std::cout << "Auto-connect failed for " << ssid.c_str() << std::endl;
+        // 可选：清除错误的保存凭据 prefs.putString(KEY_SSID,""); prefs.putString(KEY_PASS,"");
+        return false;
+    }
+}
+
+static void searchWifi_task(void *arg)
+{
+    // Ensure the list is cleared before filling
+    if (file_list)
+    {
+        // schedule clear on main thread to be safe
+        lv_async_call([](void *)
+                      { if (file_list) lv_obj_clean(file_list); }, nullptr);
+    }
+
+    int networkCount = WiFi.scanNetworks(); // blocking but in background task now
+    if (networkCount <= 0)
     {
         std::cout << "No WiFi networks found." << std::endl;
-    } 
-    else 
+    }
+    else
     {
         std::cout << networkCount << " WiFi networks found." << std::endl;
-        for (int i = 0; i < networkCount; ++i) 
+        for (int i = 0; i < networkCount; ++i)
         {
             String ss = WiFi.SSID(i);
-            WifiScanItem *it = (WifiScanItem*)malloc(sizeof(WifiScanItem));
-            if (!it) continue;
+            WifiScanItem *it = (WifiScanItem *)malloc(sizeof(WifiScanItem));
+            if (!it)
+                continue;
             it->idx = i;
             it->ssid = strdup(ss.c_str());
             // schedule button creation on LVGL main thread
             lv_async_call(add_wifi_button_async, it);
             vTaskDelay(pdMS_TO_TICKS(10)); // small delay to yield
+        }
+        // 尝试自动连接已保存的 WiFi
+        if (autoConnectSavedWiFi())
+        {
+            obj_status = lv_label_create(ui_WiFi);
+            lv_obj_set_style_text_color(obj_status, lv_color_hex(0x00FF00), 0);
+            lv_label_set_text(obj_status, "auto connected to saved WiFi");
+            lv_obj_align(obj_status, LV_ALIGN_CENTER, 0, 0);
+            lv_timer_create(label_hide_timer_cb, 3000, obj_status);
+        }
+        else
+        {
+            std::cout<<" WiFi: no saved cred or connect failed\n";
         }
     }
     // IMPORTANT: free scan results so next scan works
@@ -129,28 +194,28 @@ static void event_wifi_switch(lv_event_t *e)
     lv_event_code_t code = lv_event_get_code(e);
     if (code == LV_EVENT_VALUE_CHANGED)
     {
-        if (lv_obj_has_state(ui_wifi_switch,LV_STATE_CHECKED))
+        if (lv_obj_has_state(ui_wifi_switch, LV_STATE_CHECKED))
         {
             // clear old list immediately (on main thread)
-            if (file_list) lv_obj_clean(file_list);
+            if (file_list)
+                lv_obj_clean(file_list);
 
             // don't start multiple concurrent tasks
-            if (s_wifi_task == nullptr) 
+            if (s_wifi_task == nullptr)
             {
-    #ifdef CONFIG_FREERTOS_UNICORE
+#ifdef CONFIG_FREERTOS_UNICORE
                 xTaskCreate(
-                    searchWifi_task, "wm_wifi", 8192, NULL, 1, &s_wifi_task
-                );
-    #else
+                    searchWifi_task, "wm_wifi", 8192, NULL, 1, &s_wifi_task);
+#else
                 // Pin to APP_CPU_NUM if defined (ESP32); fallback to xTaskCreate if not available
-    #ifdef APP_CPU_NUM
+#ifdef APP_CPU_NUM
                 xTaskCreatePinnedToCore(searchWifi_task, "wm_wifi", 8192, NULL, 1, &s_wifi_task, APP_CPU_NUM);
-    #else
+#else
                 xTaskCreate(searchWifi_task, "wm_wifi", 8192, NULL, 1, &s_wifi_task);
-    #endif
-    #endif
-            } 
-            else 
+#endif
+#endif
+            }
+            else
             {
                 std::cout << "WiFi scan already running" << std::endl;
             }
@@ -159,7 +224,7 @@ static void event_wifi_switch(lv_event_t *e)
         {
             if (file_list)
             {
-               lv_obj_clean(file_list);
+                lv_obj_clean(file_list);
             }
         }
     }
@@ -168,27 +233,27 @@ static void event_wifi_switch(lv_event_t *e)
 void ui_WiFi_screen_init(void)
 {
     ui_WiFi = lv_obj_create(NULL);
-    lv_obj_clear_flag(ui_WiFi, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_clear_flag(ui_WiFi, LV_OBJ_FLAG_SCROLLABLE); /// Flags
 
     ui_normal_wifi_bg = lv_img_create(ui_WiFi);
     lv_img_set_src(ui_normal_wifi_bg, &ui_img_ui_normal_bg_png);
-    lv_obj_set_width(ui_normal_wifi_bg, LV_SIZE_CONTENT);   /// 320
-    lv_obj_set_height(ui_normal_wifi_bg, LV_SIZE_CONTENT);    /// 240
+    lv_obj_set_width(ui_normal_wifi_bg, LV_SIZE_CONTENT);  /// 320
+    lv_obj_set_height(ui_normal_wifi_bg, LV_SIZE_CONTENT); /// 240
     lv_obj_set_align(ui_normal_wifi_bg, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_normal_wifi_bg, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_normal_wifi_bg, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_add_flag(ui_normal_wifi_bg, LV_OBJ_FLAG_ADV_HITTEST);  /// Flags
+    lv_obj_clear_flag(ui_normal_wifi_bg, LV_OBJ_FLAG_SCROLLABLE); /// Flags
 
     ui_normal_wifi_list = lv_img_create(ui_WiFi);
     lv_img_set_src(ui_normal_wifi_list, &ui_img_ui_normal_list_png);
-    lv_obj_set_width(ui_normal_wifi_list, LV_SIZE_CONTENT);   /// 302
-    lv_obj_set_height(ui_normal_wifi_list, LV_SIZE_CONTENT);    /// 231
+    lv_obj_set_width(ui_normal_wifi_list, LV_SIZE_CONTENT);  /// 302
+    lv_obj_set_height(ui_normal_wifi_list, LV_SIZE_CONTENT); /// 231
     lv_obj_set_align(ui_normal_wifi_list, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_normal_wifi_list, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_normal_wifi_list, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_add_flag(ui_normal_wifi_list, LV_OBJ_FLAG_ADV_HITTEST);  /// Flags
+    lv_obj_clear_flag(ui_normal_wifi_list, LV_OBJ_FLAG_SCROLLABLE); /// Flags
 
     ui_wifi_list = lv_label_create(ui_WiFi);
-    lv_obj_set_width(ui_wifi_list, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_wifi_list, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_width(ui_wifi_list, LV_SIZE_CONTENT);  /// 1
+    lv_obj_set_height(ui_wifi_list, LV_SIZE_CONTENT); /// 1
     lv_obj_set_x(ui_wifi_list, -105);
     lv_obj_set_y(ui_wifi_list, -100);
     lv_obj_set_align(ui_wifi_list, LV_ALIGN_CENTER);
@@ -198,8 +263,8 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_style_text_font(ui_wifi_list, &ui_font_name, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_wifi_a_btn_home = lv_label_create(ui_WiFi);
-    lv_obj_set_width(ui_wifi_a_btn_home, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_wifi_a_btn_home, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_width(ui_wifi_a_btn_home, LV_SIZE_CONTENT);  /// 1
+    lv_obj_set_height(ui_wifi_a_btn_home, LV_SIZE_CONTENT); /// 1
     lv_obj_set_x(ui_wifi_a_btn_home, 0);
     lv_obj_set_y(ui_wifi_a_btn_home, 99);
     lv_obj_set_align(ui_wifi_a_btn_home, LV_ALIGN_CENTER);
@@ -209,8 +274,8 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_style_text_font(ui_wifi_a_btn_home, &ui_font_name, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_wifi_b_btn_back = lv_label_create(ui_WiFi);
-    lv_obj_set_width(ui_wifi_b_btn_back, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_wifi_b_btn_back, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_width(ui_wifi_b_btn_back, LV_SIZE_CONTENT);  /// 1
+    lv_obj_set_height(ui_wifi_b_btn_back, LV_SIZE_CONTENT); /// 1
     lv_obj_set_x(ui_wifi_b_btn_back, 112);
     lv_obj_set_y(ui_wifi_b_btn_back, 99);
     lv_obj_set_align(ui_wifi_b_btn_back, LV_ALIGN_CENTER);
@@ -225,8 +290,8 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_x(ui_btn_a_home_wifi, -65);
     lv_obj_set_y(ui_btn_a_home_wifi, 100);
     lv_obj_set_align(ui_btn_a_home_wifi, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_btn_a_home_wifi, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_btn_a_home_wifi, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_add_flag(ui_btn_a_home_wifi, LV_OBJ_FLAG_SCROLL_ON_FOCUS); /// Flags
+    lv_obj_clear_flag(ui_btn_a_home_wifi, LV_OBJ_FLAG_SCROLLABLE);    /// Flags
     lv_obj_set_style_radius(ui_btn_a_home_wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_btn_a_home_wifi, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_btn_a_home_wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -240,8 +305,8 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_x(ui_btn_b_back_wifi, 70);
     lv_obj_set_y(ui_btn_b_back_wifi, 100);
     lv_obj_set_align(ui_btn_b_back_wifi, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_btn_b_back_wifi, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
-    lv_obj_clear_flag(ui_btn_b_back_wifi, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_add_flag(ui_btn_b_back_wifi, LV_OBJ_FLAG_SCROLL_ON_FOCUS); /// Flags
+    lv_obj_clear_flag(ui_btn_b_back_wifi, LV_OBJ_FLAG_SCROLLABLE);    /// Flags
     lv_obj_set_style_radius(ui_btn_b_back_wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui_btn_b_back_wifi, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_btn_b_back_wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -250,12 +315,12 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_style_shadow_opa(ui_btn_b_back_wifi, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     file_list = lv_list_create(ui_WiFi);
-    lv_obj_set_size(file_list, 300, 150); 
-    lv_obj_set_align(file_list, LV_ALIGN_TOP_MID); 
-    lv_obj_set_x(file_list, 0); 
-    lv_obj_set_y(file_list, 50); 
-    lv_obj_set_style_bg_opa(file_list, LV_OPA_TRANSP, 0); 
-    lv_obj_set_style_border_width(file_list, 0, 0); 
+    lv_obj_set_size(file_list, 300, 150);
+    lv_obj_set_align(file_list, LV_ALIGN_TOP_MID);
+    lv_obj_set_x(file_list, 0);
+    lv_obj_set_y(file_list, 50);
+    lv_obj_set_style_bg_opa(file_list, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(file_list, 0, 0);
     // Make the list receive keyboard focus
     lv_group_add_obj(lv_group_get_default(), file_list);
     lv_group_focus_obj(file_list);
@@ -271,19 +336,19 @@ void ui_WiFi_screen_init(void)
     lv_obj_set_style_shadow_opa(ui_wifi_switch, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_wifi_switch, event_wifi_switch, LV_EVENT_VALUE_CHANGED, NULL);
-    //lv_obj_add_event_cb(ui_btn_a_home_wifi, ui_event_btn_a_home_wifi, LV_EVENT_ALL, NULL);
+    // lv_obj_add_event_cb(ui_btn_a_home_wifi, ui_event_btn_a_home_wifi, LV_EVENT_ALL, NULL);
 
-     // Start the Button A monitoring task (if not started)
-    if (s_btn_a_task == NULL) 
+    // Start the Button A monitoring task (if not started)
+    if (s_btn_a_task == NULL)
     {
-    #ifdef CONFIG_FREERTOS_UNICORE
+#ifdef CONFIG_FREERTOS_UNICORE
         xTaskCreate(btn_a_monitor_task, "btnA", 2048, NULL, 1, &s_btn_a_task);
-    #else
-    #ifdef APP_CPU_NUM
+#else
+#ifdef APP_CPU_NUM
         xTaskCreatePinnedToCore(btn_a_monitor_task, "btnA", 2048, NULL, 1, &s_btn_a_task, APP_CPU_NUM);
-    #else
+#else
         xTaskCreate(btn_a_monitor_task, "btnA", 2048, NULL, 1, &s_btn_a_task);
-    #endif
-    #endif
+#endif
+#endif
     }
 }
