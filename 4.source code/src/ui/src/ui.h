@@ -88,6 +88,18 @@ extern lv_obj_t * ui_wifi_btn;
 extern lv_obj_t * ui_control_center;
 // CUSTOM VARIABLES
 
+// SCREEN: ui_WiFi
+void ui_WiFi_screen_init(void);
+extern lv_obj_t * ui_WiFi;
+extern lv_obj_t * ui_normal_wifi_bg;
+extern lv_obj_t * ui_normal_wifi_list;
+extern lv_obj_t * ui_wifi_list;
+extern lv_obj_t * ui_wifi_a_btn_home;
+extern lv_obj_t * ui_wifi_b_btn_back;
+extern lv_obj_t * ui_btn_a_home_wifi;
+extern lv_obj_t * ui_btn_b_back_wifi;
+extern lv_obj_t * ui_wifi_switch;
+
 // CUSTOM VARIABLES
 
 // SCREEN: ui_Apps_Menu_One

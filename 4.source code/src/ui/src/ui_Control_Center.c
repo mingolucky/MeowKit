@@ -274,7 +274,10 @@ void ui_Control_Center_screen_init(void)
 
     lv_obj_add_event_cb(ui_power_btn, ui_event_power_off, LV_EVENT_ALL, NULL);
     // Only pops up on click, not responding to gestures/long presses etc.
-    lv_obj_add_event_cb(ui_wifi_btn, ui_event_wifi_btn_popup, LV_EVENT_CLICKED, NULL);
+    // lv_obj_add_event_cb(ui_wifi_btn, ui_event_wifi_btn_popup, LV_EVENT_CLICKED, NULL);
+    
+    //Temporarily annotate the WiFi network configuration on the web page and use the new network configuration method
+    lv_obj_add_event_cb(ui_wifi_btn, ui_event_wifi_btn, LV_EVENT_CLICKED, NULL);
 
     lv_obj_add_event_cb(ui_Control_Center, ui_event_Control_Center, LV_EVENT_ALL, NULL);
     //Also listen for keyboard events on the root object of the interface (used to receive LV_EVENT_KEY bubbled by child controls)
