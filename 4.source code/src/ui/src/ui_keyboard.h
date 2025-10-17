@@ -128,7 +128,7 @@ static void keyboard_btn_event_cb(lv_event_t * e)
         WiFi.scanDelete();           // Release last scan results
         WiFi.mode(WIFI_OFF);
         delay(100);
-        WiFi.persistent(false);      // Disable writing new credentials to flash (on demand)
+        WiFi.persistent(true);      // Disable writing new credentials to flash (on demand)
         WiFi.mode(WIFI_STA);
 #ifdef ESP32
         // Optional: Disable power saving to prevent handshake from being interrupted (requires including <esp_wifi.h>)
@@ -145,18 +145,19 @@ static void keyboard_btn_event_cb(lv_event_t * e)
             delay(stepMs);
             waited += stepMs;
         }
-
+        obj_status = lv_label_create(ui_WiFi);
         if (WiFi.status() == WL_CONNECTED) 
         {
             std::cout<< "Connected to WiFi: "<< wifi_ssid.c_str() << std::endl;
             std::cout<< "pp: "<< pass.c_str() << std::endl;
             retMsg = "Connected to WiFi successfully!";
+            lv_obj_set_style_text_color(obj_status, lv_color_hex(0x00FF00), 0);
             saveWiFiCredentials(wifi_ssid.c_str(), pass.c_str());
         }
         else
         {
             std::cout<< "Failed to connect to WiFi: "<< wifi_ssid.c_str() << std::endl;
-            std::cout<< "pp: "<< pass.c_str() << std::endl;
+            lv_obj_set_style_text_color(obj_status, lv_color_hex(0xFF0000), 0);
             retMsg = "Failed to connect to WiFi!";
             // Clean up after failure to avoid residual impact on subsequent scans/connections
             WiFi.disconnect(true);
@@ -171,12 +172,19 @@ static void keyboard_btn_event_cb(lv_event_t * e)
         lv_indev_wait_release(lv_indev_get_act());
         _ui_screen_change(&ui_WiFi, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_WiFi_screen_init);
 
-        obj_status = lv_label_create(ui_WiFi);
-        //lv_set_color(aa, lv_color_hex(0xFF0000));
         lv_label_set_text(obj_status, retMsg.c_str());
-        lv_obj_set_style_text_color(obj_status, lv_color_hex(0xFF0000), 0);
+        
         lv_obj_align(obj_status, LV_ALIGN_CENTER, 0, 0);
         lv_timer_create(label_hide_timer_cb, 3000, obj_status);
+
+        // clear text
+        String text = lv_textarea_get_text(textarea);
+        if (!text.isEmpty())
+        {
+            lv_textarea_set_text(textarea, "");
+            lv_textarea_set_cursor_pos(textarea, 0);      
+            lv_obj_invalidate(textarea);                    
+        }
         return;
     }
 
@@ -214,6 +222,8 @@ void create_3x4_keyboard(lv_obj_t * parent)
     if (!text.isEmpty())
     {
         lv_textarea_set_text(textarea, "");
+        lv_textarea_set_cursor_pos(textarea, 0);      
+        lv_obj_invalidate(textarea);                    
     }
     
     lv_obj_set_size(textarea, 300, 60);
