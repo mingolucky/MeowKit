@@ -29,38 +29,59 @@ void ui_WiFi_keyboard_screen_init(void)
 // The callback for switching to Home in the LVGL main thread (called by lv_async_call)
 static void btn_a_press_lv_cb(void *ud)
 {
-    // Respond only when on WiFi interface (double insurance)
-    extern lv_obj_t *ui_Home;
-    extern void ui_Home_screen_init(void);
-    if (lv_scr_act() == ui_WiFi)
+    int which = (int)(intptr_t)ud;
+    if (lv_scr_act() != ui_WiFi) return;
+
+    lv_indev_wait_release(lv_indev_get_act());
+
+    if (which == 1) // A
     {
-        lv_indev_wait_release(lv_indev_get_act());
-        _ui_screen_change(&ui_Control_Center, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0, &ui_Control_Center_screen_init);
-        // task done, delete self
-        s_wifi_task = nullptr;
+        extern lv_obj_t *ui_Home;
+        extern void ui_Home_screen_init(void);
+        _ui_screen_change(&ui_Home, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, &ui_Home_screen_init);
     }
+    else if (which == 2) // B
+    {
+        extern lv_obj_t *ui_Control_Center;
+        extern void ui_Control_Center_screen_init(void);
+        _ui_screen_change(&ui_Control_Center, LV_SCR_LOAD_ANIM_FADE_ON, 300, 0, &ui_Control_Center_screen_init);
+    }
+
+    // task done cleanup if needed
+    s_wifi_task = nullptr;
 }
 
 // Background task: poll physical button A, detect press (debounce), trigger return to Home when the current button is ui_WiFi
 static void btn_a_monitor_task(void *arg)
 {
     const TickType_t sampleDelay = pdMS_TO_TICKS(50);
-    bool last_pressed = false;
-
+    bool lastA = false;
+    bool lastB = false;
     while (true)
     {
-        bool pressed = (digitalRead(5) == LOW); // Active low
-        if (pressed && !last_pressed)
+        bool pressedA = (digitalRead(5) == LOW); // A active low
+        bool pressedB = (digitalRead(4) == LOW); // B active low
+
+        if (pressedA && !lastA)
         {
-            // Button pressed edge
-            vTaskDelay(pdMS_TO_TICKS(20)); // Simple debounce
+            vTaskDelay(pdMS_TO_TICKS(20)); // debounce
             if (digitalRead(5) == LOW)
             {
-                // Confirm the press and switch to the main thread to execute the callback
-                lv_async_call(btn_a_press_lv_cb, nullptr);
+                lv_async_call(btn_a_press_lv_cb, (void *)(intptr_t)1); // pass 1 => A
             }
         }
-        last_pressed = pressed;
+
+        if (pressedB && !lastB)
+        {
+            vTaskDelay(pdMS_TO_TICKS(20)); // debounce
+            if (digitalRead(4) == LOW)
+            {
+                lv_async_call(btn_a_press_lv_cb, (void *)(intptr_t)2); // pass 2 => B
+            }
+        }
+
+        lastA = pressedA;
+        lastB = pressedB;
         vTaskDelay(sampleDelay);
     }
 }
@@ -93,7 +114,7 @@ static void add_wifi_button_async(void *ud)
     }
 }
 
-// 从 NVS 读取已保存的 SSID/密码
+// Read saved SSID/password from NVS
 static bool loadWiFiCredentials(String &out_ssid, String &out_pass)
 {
     prefs.begin(PREF_NAMESPACE, false);
@@ -103,14 +124,14 @@ static bool loadWiFiCredentials(String &out_ssid, String &out_pass)
     return out_ssid.length() > 0;
 }
 
-// 如果有保存的凭据则尝试自动连接（返回是否连接成功）
+// If there are saved credentials, try to connect automatically (return whether the connection is successful)
 static bool autoConnectSavedWiFi(int timeoutMs = 5000)
 {
     String ssid, pass;
     if (!loadWiFiCredentials(ssid, pass))
         return false;
 
-    wifi_ssid = ssid; // 更新全局变量（UI 使用）
+    wifi_ssid = ssid; 
     std::cout << "Auto connect: " << ssid.c_str() << std::endl;
 
     WiFi.disconnect(true);
@@ -134,7 +155,7 @@ static bool autoConnectSavedWiFi(int timeoutMs = 5000)
     else
     {
         std::cout << "Auto-connect failed for " << ssid.c_str() << std::endl;
-        // 可选：清除错误的保存凭据 prefs.putString(KEY_SSID,""); prefs.putString(KEY_PASS,"");
+        // Optional: Clear incorrect saved credentials prefs.putString(KEY_SSID,""); prefs.putString(KEY_PASS,"");
         return false;
     }
 }
@@ -169,7 +190,7 @@ static void searchWifi_task(void *arg)
             lv_async_call(add_wifi_button_async, it);
             vTaskDelay(pdMS_TO_TICKS(10)); // small delay to yield
         }
-        // 尝试自动连接已保存的 WiFi
+        // Try to automatically connect to saved WiFi
         if (autoConnectSavedWiFi())
         {
             obj_status = lv_label_create(ui_WiFi);
