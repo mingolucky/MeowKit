@@ -41,3 +41,7 @@ void MeowKit::Destroy()
         _device = nullptr;
     }
 }
+
+MeowKit::~MeowKit() {
+    Destroy();
+}

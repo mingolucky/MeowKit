@@ -13,7 +13,8 @@
 class Game {
 
     public:
-
+        Game() = default;
+        ~Game();
         void begin(DEVICES* device);
         void loop();
 
