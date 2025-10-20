@@ -157,7 +157,7 @@ namespace MOONCAKE
                 //bool sd_available =  _device->sd.isInited();
                 bool sd_available = _device->sd.checkCardPresent();
                 //检测是否有sd卡
-                if (ui_home_sd_off != NULL) ;
+                if (ui_home_sd_off != NULL)
                 {
                     if (sd_available) 
                     {

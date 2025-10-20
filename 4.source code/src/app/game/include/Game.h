@@ -16,6 +16,7 @@ class Game {
 
         void begin(DEVICES* device);
         void loop();
+        ~Game();
 
     private:
 

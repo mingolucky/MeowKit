@@ -51,6 +51,17 @@ void Game::begin(DEVICES* device) {
 
 }
 
+Game::~Game() {
+    if (_framebuffer != nullptr) {
+        delete _framebuffer;
+        _framebuffer = nullptr;
+    }
+    if (_dino != nullptr) {
+        delete _dino;
+        _dino = nullptr;
+    }
+}
+
 void Game::loop() {
 
     _twinkleStars();

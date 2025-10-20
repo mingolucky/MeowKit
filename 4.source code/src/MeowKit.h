@@ -25,4 +25,5 @@ class MeowKit
         void Setup();
         void Loop();
         void Destroy();
+        ~MeowKit();
 };
