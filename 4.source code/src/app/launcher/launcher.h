@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <mooncake.h>
 #include "bsp/devices.h"
+#include "../../luaEngine/luaEngine.h"
 
 using namespace mooncake;
 
@@ -42,6 +43,7 @@ namespace MOONCAKE
             std::unique_ptr<Mooncake> _mooncake = nullptr;
             DEVICES *_device = nullptr;
             bool _lvgl_enable = false;
+            std::unique_ptr<luaEngine> _luaEngine = nullptr;
         };
     }
 } // namespace MOONCAKE::APPS

@@ -7,6 +7,7 @@
 #include <memory>
 #include "deviceStateManager.h"
 #include "timeSetting.h"
+#include "luaEngine/luascriptManager.h"
 
 namespace MOONCAKE
 {
@@ -16,7 +17,7 @@ namespace MOONCAKE
 
         void Launcher::updateAPPManager()
         {
-            if (selected_app_index >= 0)
+            if (selected_app_index >= 0 && selected_app_index < 11)
             {
                 // Disable LVGL
                 _lvgl_enable = false;
@@ -60,21 +61,37 @@ namespace MOONCAKE
                             // Re-initialize UI
                             reInitUI(selected_app_index);
 
-                            // Reset selected app index
-                            selected_app_index = -1;
-
-                            // Re-enable LVGL
-                            _lvgl_enable = true;
-
-                            /* Reset auto screen off time counting */
-                            lv_disp_trig_activity(NULL);
-
                             // Break the loop to return to the launcher
                             break;
                         }
                     }
                 }
             }
+            else if (selected_app_index >= 11)
+            {
+                // Disable LVGL
+                _lvgl_enable = false;
+
+                /* Delete Launcher screen and reaplace with an empty one */
+                lv_disp_load_scr(lv_obj_create(NULL));
+                lv_obj_del(ui_Apps_Menu_Three);
+
+                std::string appId = std::to_string(selected_app_index);
+                _luaEngine->runScriptFromSD(appId.c_str());
+                while (1)
+                {
+                    vTaskDelay(5);
+                    _device->button.B.tick();
+                    if (_device->button.B.isLongPress())
+                    {
+                        reInitUI(selected_app_index);
+           
+                        break;
+                    }
+                }
+                
+            }
+            
         }
 
         void Launcher::updateDeviceStatus()
@@ -217,6 +234,13 @@ namespace MOONCAKE
             _mooncake = std::make_unique<mooncake::Mooncake>();
             MeowKit_app_install_callback(_mooncake.get(), _device);
 
+            luaScriptManager& manager = luaScriptManager::getInstance();
+            // set device
+            manager.setDevice(_device);
+            // load all scripts
+            manager.loadScriptsFromSD();
+            _luaEngine = std::make_unique<luaEngine>(_device);
+
             _lvgl_enable = true;
         }
 
@@ -243,6 +267,10 @@ namespace MOONCAKE
             {
                 lv_disp_load_scr(ui_Apps_Menu_Three);
             }
+
+            selected_app_index = -1;
+            _lvgl_enable = true;
+            lv_disp_trig_activity(NULL);
         }
 
         void Launcher::onLoop()
