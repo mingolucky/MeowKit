@@ -1,3 +1,5 @@
+#pragma once
+
 // Include Lua headers
 extern "C" {
 #include "lua.h"
@@ -7,15 +9,19 @@ extern "C" {
 
 #include "bsp/devices.h"
 
-class luaEngine { 
+class luaEngine {
 public:
-    luaEngine(DEVICES *device);
+    luaEngine(std::shared_ptr<DEVICES> device);
+
     ~luaEngine();
-    void runScript(const char* description);
-    bool runScriptFromSD(const std::string& id);
+
+    void runScript(const std::string &scriptContent);
+
+    bool runScriptFromSD(const std::string &id);
+
     void close();
 
 private:
     lua_State* m_L;
-    DEVICES *m_device;
+    std::shared_ptr<DEVICES> m_device;
 };
