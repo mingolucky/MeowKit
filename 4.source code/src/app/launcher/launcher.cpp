@@ -96,7 +96,7 @@ namespace MOONCAKE
 
         void Launcher::updateDeviceStatus()
         {
-            // [Disabled] CTP 触摸唤醒屏幕：临时屏蔽触摸点亮与活跃计时复位
+            // [Disabled] CTP Touch to wake up the screen: temporarily block touch lighting and reset the active timer
             // if (_device->ctp.isTouched())
             // {
             //     /* Reset auto screen off time counting */
@@ -115,7 +115,7 @@ namespace MOONCAKE
                 //_device->audio.setVolume(_device_status.volume);
             }
 
-            // [Disabled] 自动熄屏：临时屏蔽基于不活动时间的自动休眠
+            // [Disabled] Automatic screen off: Temporarily block automatic sleep based on inactivity time
             // if (_device_status.autoScreenOff && (lv_disp_get_inactive_time(NULL) > _device_status.autoScreenOffTime))
             // {
             //     // Set brightness to minimum
@@ -128,24 +128,22 @@ namespace MOONCAKE
 
             if (_device_status.powerDetection == false)
             {
-                // 节流 + 平滑：30s 最多更新一次；数值变化仅当差值>=2才立即更新，避免 78/79 来回跳动
-                static unsigned long last_bat_check = 0; // 上次UI更新时间戳
-                static int last_shown_percent = -1;      // 上次显示的百分比（UI）
-                static float filtered_percent = -1.0f;   // 平滑后的百分比
+                // Throttling + Smoothing: Update at most once every 30 seconds; update the value only when the difference is >= 2, to avoid jumping back and forth between 78/79
+                static unsigned long last_bat_check = 0; 
+                static int last_shown_percent = -1;      
+                static float filtered_percent = -1.0f;   
 
                 unsigned long now = millis();
                 int cur_percent = _device->getBatteryPercent();
 
-                // 初始化滤波
                 if (filtered_percent < 0.0f)
                 {
                     filtered_percent = (float)cur_percent;
                 }
-                // 指数平滑，抑制抖动
                 filtered_percent = filtered_percent * 0.7f + (float)cur_percent * 0.3f;
-                int display_percent = (int)(filtered_percent + 0.5f); // 四舍五入
+                int display_percent = (int)(filtered_percent + 0.5f); // rounding
 
-                bool time_elapsed = (unsigned long)(now - last_bat_check) >= 30000UL; // 至少30秒
+                bool time_elapsed = (unsigned long)(now - last_bat_check) >= 30000UL; // At least 30 seconds
                 bool big_change = (last_shown_percent < 0) || (abs(display_percent - last_shown_percent) >= 2);
 
                 if (time_elapsed || big_change)
@@ -153,11 +151,11 @@ namespace MOONCAKE
                     last_bat_check = now;
                     last_shown_percent = display_percent;
 
-                    // 显示格式改为 "X/100"
+                    // Display format changed to "X/100"
                     std::string percent = std::to_string(display_percent) + "/100";
                     lv_label_set_text(ui_bat_number, percent.c_str());
                     // lv_obj_set_style_text_font(ui_bat_number, &ui_font_apps_name, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_invalidate(ui_bat_number); // 刷新电池百分比显示
+                    lv_obj_invalidate(ui_bat_number); // Refresh battery percentage display
                 }
             }
 
@@ -174,18 +172,16 @@ namespace MOONCAKE
             {
                 // bool sd_available =  _device->sd.isInited();
                 bool sd_available = _device->sd.checkCardPresent();
-                // 检测是否有sd卡
+                // Check if there is an SD card
                 if (ui_home_sd_off != NULL)
                 {
                     if (sd_available)
                     {
-                        // SD卡存在，显示sd_on图标
                         lv_img_set_src(ui_home_sd_off, &ui_img_ui_home_sd_on_png);
                         // std::cout << "SD卡存在" << std::endl;
                     }
                     else
                     {
-                        // SD卡不存在，显示sd_off图标
                         lv_img_set_src(ui_home_sd_off, &ui_img_ui_home_sd_off_png);
                         // std::cout << "SD卡不存在" << std::endl;
                     }
@@ -193,14 +189,14 @@ namespace MOONCAKE
                 }
             }
 
-            // 更新时钟
+            // Update the clock
             ui_clock_update();
 
-            // 判断当前界面是否是时钟界面
+            // Determine whether the current interface is the clock interface
             lv_obj_t *current_screen = lv_disp_get_scr_act(NULL);
             if (current_screen == ui_Clock)
             {
-                // 如果是时钟界面，确保时钟更新函数被调用
+                // If it is a clock interface, make sure the clock update function is called
                 // ui_clock_update();
 
                 // std::cout<<"Switched to clock page"<<std::endl;
@@ -239,7 +235,7 @@ namespace MOONCAKE
             manager.setDevice(_device);
             // load all scripts
             manager.loadScriptsFromSD();
-            _luaEngine = std::make_unique<luaEngine>(_device);
+            _luaEngine = std::make_unique<luaEngine>(std::shared_ptr<DEVICES>(_device));
 
             _lvgl_enable = true;
         }
@@ -294,7 +290,7 @@ namespace MOONCAKE
         // Sleep mode
         void Launcher::sleep_mode()
         {
-            /* Reset button B interrupt pin (禁用触摸中断唤醒) */
+            /* Reset button B interrupt pin (Disable touch interrupt wakeup) */
             gpio_reset_pin(GPIO_NUM_0);
             gpio_set_direction(GPIO_NUM_0, GPIO_MODE_INPUT);
             gpio_wakeup_enable(GPIO_NUM_0, GPIO_INTR_HIGH_LEVEL);
@@ -322,7 +318,7 @@ namespace MOONCAKE
             {
                 char buf[9];
                 snprintf(buf, sizeof(buf), "%02d:%02d:%02d", now.hour, now.min, now.sec);
-                // 只更新文本内容，不改变布局 - 防止跳动
+                // Only update the text content without changing the layout - to prevent jumping
                 for (int i = 0; i < 8; ++i)
                 {
                     if (ui_time_digit[i])
@@ -330,7 +326,7 @@ namespace MOONCAKE
                         lv_label_set_text_fmt(ui_time_digit[i], "%c", buf[i]);
                     }
                 }
-                // 刷新日期和星期
+                // Refresh date and day of the week
                 lv_label_set_text_fmt(ui_data, "%02d-%02d-%04d", now.day, now.month, now.year);
                 lv_label_set_text(ui_week, week_str[now.weekday % 7]);
                 // std::cout<<"RTC_Time get success"<<std::endl;

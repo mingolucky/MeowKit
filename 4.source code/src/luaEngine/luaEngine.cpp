@@ -1,11 +1,13 @@
 #include "luaEngine.h"
-#include "luaTest.h"
+#include "luaSDK.h"
 #include "esp_log.h"
 #include "luaScriptManager.h"
+#include "luaDeviceLib.h"
+
 
 static const char *TAG = "luaEngine";
 
-luaEngine::luaEngine(DEVICES *device) : m_device(device),
+luaEngine::luaEngine(std::shared_ptr<DEVICES> device) : m_device(device),
                                         m_L(nullptr)
 {
 }
@@ -24,7 +26,7 @@ void luaEngine::close()
     }
 }
 
-void luaEngine::runScript(const char *scriptContent)
+void luaEngine::runScript(const std::string& scriptContent)
 {
     lua_State *L = luaL_newstate();
     if (L == NULL)
@@ -43,7 +45,7 @@ void luaEngine::runScript(const char *scriptContent)
     }
 
     // Load and execute the Lua script from file
-    if (luaL_dofile(L, scriptContent) != LUA_OK)
+    if (luaL_dofile(L, scriptContent.c_str()) != LUA_OK)
     {
         ESP_LOGE(TAG, "Error executing Lua script: %s", lua_tostring(L, -1));
         lua_pop(L, 1);
@@ -78,6 +80,8 @@ bool luaEngine::runScriptFromSD(const std::string& id)
 
     // open standard libraries
     luaL_openlibs(m_L);
+
+    LuaDevice::registerToLua(m_L, m_device.get());
 
     luaL_requiref(m_L, "myTable", Lua_ModelTest, 1);
 

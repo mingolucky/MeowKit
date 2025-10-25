@@ -7,28 +7,28 @@
 
 class luaScriptManager {
 public:
-    // 删除构造函数和赋值操作符
+    // Delete constructor and assignment operator
     luaScriptManager(const luaScriptManager&) = delete;
     luaScriptManager& operator=(const luaScriptManager&) = delete;
     
-    // 获取单例实例
+    // Get singleton instance
     static luaScriptManager& getInstance();
     
-    // 从SD卡的script文件夹下读取所有以app_id开头的文件夹
-    // 并从文件夹中读取以app_id.lua的脚本文件
+    // Read all folders starting with app_id under the /script folder on the SD card
+    // and load the script file named app_id.lua from each folder
     bool loadScriptsFromSD();
     
-    // 运行指定ID的脚本
+    // Run the script with the specified ID
     bool getScriptById(const std::string& id, std::string& outScript) const;
     
-    // 获取已加载的脚本列表
+    // Get a list of loaded scripts
     const std::map<std::string, std::string>& getLoadedScripts() const;
 
-    // 设置设备指针
+    // Set device pointer
     void setDevice(DEVICES* device);
 
 private:
-    luaScriptManager();  // 私有化构造函数
+    luaScriptManager();  // Private constructor
     ~luaScriptManager();
 
     DEVICES* m_device;

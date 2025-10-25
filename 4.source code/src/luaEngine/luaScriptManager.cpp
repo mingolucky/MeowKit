@@ -1,5 +1,5 @@
 #include "luaScriptManager.h"
-#include "luaTest.h"
+#include "luaSDK.h"
 #include "esp_log.h"
 #include "FS.h"
 #include "SD_MMC.h"
@@ -53,10 +53,10 @@ bool luaScriptManager::loadScriptsFromSD()
         return false;
     }
 
-    // 清空之前加载的脚本
+    // Clear previously loaded scripts
     m_scripts.clear();
 
-    // 打开/script目录
+    // Open the /script directory
     File scriptDir = SD_MMC.open("/script");
     if (!scriptDir || !scriptDir.isDirectory())
     {
@@ -64,22 +64,22 @@ bool luaScriptManager::loadScriptsFromSD()
         return false;
     }
 
-    // 遍历/script目录下的所有子目录
+    // Traverse all subdirectories under /script
     File file = scriptDir.openNextFile();
     while (file)
     {
         if (file.isDirectory())
         {
             std::string dirName = file.name();
-            // 获取目录名作为app_id (例如: /script/app_1/app_1.lua)
+            // Get the directory name as app_id (for example: /script/app_1/app_1.lua)
             size_t lastSlash = dirName.find_last_of("/");
             std::string dirPart = (lastSlash != std::string::npos) ? dirName.substr(lastSlash + 1) : dirName;
             
-            // 从最后一个下划线后提取数字作为app_id
+            // Extract the number after the last underscore as app_id
             size_t lastUnderscore = dirPart.find_last_of("_");
             std::string appId = (lastUnderscore != std::string::npos) ? dirPart.substr(lastUnderscore + 1) : dirPart;
 
-            // 加载该app_id对应的脚本
+            // Load the script corresponding to app_id
             loadSingleScript(dirPart,appId);
         }
         file = scriptDir.openNextFile();
@@ -91,7 +91,7 @@ bool luaScriptManager::loadScriptsFromSD()
 
 bool luaScriptManager::loadSingleScript(const std::string &appName, const std::string &appId)
 {
-    // 构造脚本文件路径 /script/{appId}/{appId}.lua
+    // Construct script file path /script/{appId}/{appId}.lua
     std::string scriptPath = "/script/" + appName + "/" + "main_" + appId + ".lua";
     ESP_LOGI(TAG, "Loading script from path: %s", scriptPath.c_str());
 
@@ -103,7 +103,7 @@ bool luaScriptManager::loadSingleScript(const std::string &appName, const std::s
         return false;
     }
 
-    // 读取文件内容
+    // Read file content
     size_t fileSize = file.size();
     char *content = (char *)malloc(fileSize + 1);
     if (!content)
@@ -125,7 +125,7 @@ bool luaScriptManager::loadSingleScript(const std::string &appName, const std::s
 
     content[fileSize] = '\0';
 
-    // 存储到map中
+    // Store in map
     m_scripts[appId] = std::string(content);
     free(content);
 
