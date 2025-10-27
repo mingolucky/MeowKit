@@ -47,6 +47,12 @@ public:
      */
     void screnenPrint(const std::string &text);
 
+    /**
+     * @brief Set background image from SD card
+     * @param path Path to the image file on SD card
+     * @return True if successful, false otherwise
+     */
+    bool setBackgroundFromSD(const std::string &path);
 
     /**
      * @brief Register the device class to Lua state machine
@@ -66,4 +72,5 @@ namespace lua_bind
     int getScreenSize(lua_State *L);
     int drawPixel(lua_State *L);
     int screenPrint(lua_State *L);
+    int setBackgroundFromSD(lua_State *L);
 }

@@ -44,11 +44,31 @@ void LuaDevice::screnenPrint(const std::string &text)
     m_device->Lcd.print(text.c_str());
 }
 
+bool LuaDevice::setBackgroundFromSD(const std::string &path)
+{
+    if (!m_device)
+        return false;
 
+    // Try to open the file to check if it exists
+    File file = SD_MMC.open(path.c_str(), FILE_READ);
+    if (!file)
+    {
+        Serial.println("File not found");
+        return false;
+    }
+    Serial.println("File found");
+    // Read file content
+    size_t fileSize = file.size();
+    uint8_t *buffer = new uint8_t[fileSize];
+    file.read(buffer, fileSize);
+    file.close();
 
+    // Load image from buffer and set as background
+    m_device->Lcd.drawPng(buffer, fileSize, 0, 0);
+    delete[] buffer;
 
-
-
+    return true;
+}
 
 //*****************************lua binding functions************************************ */
 // Lua binding functions implementation
@@ -152,13 +172,31 @@ int lua_bind::screenPrint(lua_State *L)
     // Get device instance
     LuaDevice **ud = (LuaDevice **)luaL_checkudata(L, 1, "LuaDevice");
 
-
     if (!ud || !*ud)
     {
         return luaL_error(L, "Invalid LuaDevice instance");
     }
     std::string text = luaL_checkstring(L, 2);
     (*ud)->screnenPrint(text);
+    return 0;
+}
+
+int lua_bind::setBackgroundFromSD(lua_State *L)
+{
+    // Parameter validation
+    if (lua_gettop(L) != 2)
+    {
+        return luaL_error(L, "setBackgroundFromSD expects 2 arguments (self, path)");
+    }
+
+    // Get device instance
+    LuaDevice **ud = (LuaDevice **)luaL_checkudata(L, 1, "LuaDevice");
+
+    if (!ud || !*ud)
+    {
+        return luaL_error(L, "Invalid LuaDevice instance");
+    }
+    return (*ud)->setBackgroundFromSD(luaL_checkstring(L, 2)) ? 0 : luaL_error(L, "setBackgroundFromSD failed");
     return 0;
 }
 
@@ -175,6 +213,8 @@ void LuaDevice::registerToLua(lua_State *L, DEVICES *device)
         {"clearScreen", lua_bind::clearScreen},
         {"getScreenSize", lua_bind::getScreenSize},
         {"drawPixel", lua_bind::drawPixel},
+        {"drawPixel", lua_bind::screenPrint},
+        {"setBackgroundFromSD", lua_bind::setBackgroundFromSD},
         {nullptr, nullptr}};
     luaL_setfuncs(L, methods, 0);
 
