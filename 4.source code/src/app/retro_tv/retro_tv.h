@@ -23,18 +23,19 @@ namespace MOONCAKE::APPS
     /**
      * @brief RetroTV app
      */
-    class RetroTV : public AppAbility {
+    class RetroTV : public AppAbility
+    {
     public:
-        RetroTV(DEVICES* device);
-        ~RetroTV();  
+        RetroTV(DEVICES *device);
+        ~RetroTV();
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
-        
+
     private:
-        DEVICES* _device = nullptr;
-        TCPReceiver* _recv = nullptr;  // The receiver as a member variable
-        bool _wifiConnected = false;   // WiFi connection status
-        bool _isClosing = false;       // Added closed status flag
+        DEVICES *_device = nullptr;
+        TCPReceiver *_recv = nullptr; // The receiver as a member variable
+        bool _wifiConnected = false;  // WiFi connection status
+        bool _isClosing = false;      // Added closed status flag
     };
 }

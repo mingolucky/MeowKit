@@ -19,9 +19,10 @@ namespace MOONCAKE::APPS
     /**
      * @brief BadUSB app
      */
-    class BadUSB : public AppAbility {
+    class BadUSB : public AppAbility
+    {
     public:
-        BadUSB(DEVICES* device);
+        BadUSB(DEVICES *device);
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
@@ -30,8 +31,8 @@ namespace MOONCAKE::APPS
         // UI drawing
         void drawHeader();
         void drawSelection();
-        void drawStatus(const char* status);
-        void redrawAll(const char* status);
+        void drawStatus(const char *status);
+        void redrawAll(const char *status);
 
         // SD & script
         void scanScripts();
@@ -42,19 +43,19 @@ namespace MOONCAKE::APPS
         void stepExecution();
 
         // Parse/execute a line
-        void execCommand(const String& line);
-        bool matchToken(const String& s, const char* token);
-        uint8_t keyFromName(const String& name, bool& isPrintable, uint8_t& printableChar);
+        void execCommand(const String &line);
+        bool matchToken(const String &s, const char *token);
+        uint8_t keyFromName(const String &name, bool &isPrintable, uint8_t &printableChar);
 
     private:
-        DEVICES* _device = nullptr;
+        DEVICES *_device = nullptr;
         USBHIDKeyboard Keyboard;
 
         // Running status
         bool _sdReady = false;
         bool _running = false;
         bool _paused = false;
-        uint32_t _nextTime = 0;     // Non-blocking delay control
+        uint32_t _nextTime = 0; // Non-blocking delay control
 
         // Script Management
         std::vector<String> _scripts; // /badusb/*.txt List (full path)

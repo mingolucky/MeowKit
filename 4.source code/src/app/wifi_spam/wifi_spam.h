@@ -20,21 +20,21 @@ namespace MOONCAKE::APPS
     /**
      * @brief WiFi Spam - WiFi Network Jammer
      */
-    class WiFiSpam : public AppAbility 
+    class WiFiSpam : public AppAbility
     {
     public:
-        WiFiSpam(DEVICES* device);
+        WiFiSpam(DEVICES *device);
         virtual ~WiFiSpam() = default;
-        
+
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
-        
+
     private:
-        DEVICES* _device;
-        int currentLine;  // Current row counter
-        
-        void displayTextOnBackground(const char* text, bool newLine = true);
+        DEVICES *_device;
+        int currentLine; // Current row counter
+
+        void displayTextOnBackground(const char *text, bool newLine = true);
         void clearDisplayArea();
     };
 }

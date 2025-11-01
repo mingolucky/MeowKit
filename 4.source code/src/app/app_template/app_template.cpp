@@ -12,24 +12,24 @@
 
 namespace MOONCAKE::APPS
 {
-    AppTemplate::AppTemplate(DEVICES* device)
+    AppTemplate::AppTemplate(DEVICES *device)
         : _device(device)
     {
         setAppInfo().name = "AppTemplate";
     }
 
     void AppTemplate::onOpen()
-    { 
+    {
         std::cout << "AppTemplate::onOpen() called" << std::endl;
-        
+
         _device->Lcd.fillScreen(TFT_BLACK);
         matrix_effect.init(&_device->Lcd);
         matrix_effect.setup(
-            10 /* Line Min */, 
-            30,  /* Line Max */
+            10 /* Line Min */,
+            30, /* Line Max */
             5,  /* Speed Min */
-            25,  /* Speed Max */
-            30  /* Screen Update Interval */);  
+            25, /* Speed Max */
+            30 /* Screen Update Interval */);
     }
 
     void AppTemplate::onRunning()
@@ -41,9 +41,9 @@ namespace MOONCAKE::APPS
     {
         std::cout << "AppTemplate::onClose() called" << std::endl;
         // Clear the screen to prevent ghosting
-        if (_device && _device->Lcd.width() > 0 && _device->Lcd.height() > 0) {
+        if (_device && _device->Lcd.width() > 0 && _device->Lcd.height() > 0)
+        {
             _device->Lcd.fillScreen(TFT_BLACK);
         }
-
     }
 }

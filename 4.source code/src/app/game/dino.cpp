@@ -10,7 +10,7 @@
 Game dino;
 namespace MOONCAKE::APPS
 {
-    Dino::Dino(DEVICES* device)
+    Dino::Dino(DEVICES *device)
         : _device(device)
     {
         setAppInfo().name = "Game";

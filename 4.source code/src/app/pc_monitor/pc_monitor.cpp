@@ -10,7 +10,8 @@
 #include "lvgl.h"
 
 // Use LVGL UI assets (fonts + images + positioned widgets)
-extern "C" {
+extern "C"
+{
 #include "asset/ui.h"
 }
 
@@ -19,28 +20,31 @@ bool stringComplete = false;
 const int Serial0_eventDelay = 15;
 static bool s_hasData = false; // The value will not be displayed until the first complete frame of data is received.
 
-void style_01(DEVICES* _device) {
+void style_01(DEVICES *_device)
+{
     //------------------------------------------- Update UI widgets (LVGL) ----------------------------------------------------//
     // Background and bars are already positioned by SquareLine (3 images + 2 fonts)
 
- //------------------------------------------- CPU & GPU name ----------------------------------------------------//
-  String cpuName, gpuName;
+    //------------------------------------------- CPU & GPU name ----------------------------------------------------//
+    String cpuName, gpuName;
 
-  /* Extract CPU name */
-  int cpuIndex = inputString.indexOf("CPU:");
-  if (cpuIndex != -1) {
-      cpuIndex += (inputString.indexOf("Intel", cpuIndex) != -1) ? 10 : 8; // Handling Intel offsets
-      int gpuIndex = inputString.indexOf("GPU:");
-      cpuName = (gpuIndex != -1) ? inputString.substring(cpuIndex, gpuIndex) : inputString.substring(cpuIndex);
-  }
+    /* Extract CPU name */
+    int cpuIndex = inputString.indexOf("CPU:");
+    if (cpuIndex != -1)
+    {
+        cpuIndex += (inputString.indexOf("Intel", cpuIndex) != -1) ? 10 : 8; // Handling Intel offsets
+        int gpuIndex = inputString.indexOf("GPU:");
+        cpuName = (gpuIndex != -1) ? inputString.substring(cpuIndex, gpuIndex) : inputString.substring(cpuIndex);
+    }
 
-  /*  Extract GPU name */
-  int gpuIndex = inputString.indexOf("GPU:");
-  if (gpuIndex != -1) {
-      gpuIndex += (inputString.indexOf("NVIDIA", gpuIndex) != -1) ? 18 : 8; // Dealing with NVIDIA offset
-      int gpuEnd = inputString.indexOf("|", gpuIndex);
-      gpuName = (gpuEnd != -1) ? inputString.substring(gpuIndex, gpuEnd) : inputString.substring(gpuIndex);
-  }
+    /*  Extract GPU name */
+    int gpuIndex = inputString.indexOf("GPU:");
+    if (gpuIndex != -1)
+    {
+        gpuIndex += (inputString.indexOf("NVIDIA", gpuIndex) != -1) ? 18 : 8; // Dealing with NVIDIA offset
+        int gpuEnd = inputString.indexOf("|", gpuIndex);
+        gpuName = (gpuEnd != -1) ? inputString.substring(gpuIndex, gpuEnd) : inputString.substring(gpuIndex);
+    }
 
     /* Display CPU & GPU names */
 #ifdef Manual_cpuName
@@ -57,81 +61,78 @@ void style_01(DEVICES* _device) {
 
     //------------------------------------------ CPU Load/Temp -------------------------------------------------//
 
-  /*CPU Display String*/
-  int cpuStringStart = inputString.indexOf("C");
-  int cpuDegree = inputString.indexOf("c");
-  int cpuStringLimit = inputString.indexOf("|");
-  String cpuString1 = inputString.substring(cpuStringStart + 1, cpuDegree);
-  String cpuString2 = inputString.substring(cpuDegree + 1, cpuStringLimit - 1);
+    /*CPU Display String*/
+    int cpuStringStart = inputString.indexOf("C");
+    int cpuDegree = inputString.indexOf("c");
+    int cpuStringLimit = inputString.indexOf("|");
+    String cpuString1 = inputString.substring(cpuStringStart + 1, cpuDegree);
+    String cpuString2 = inputString.substring(cpuDegree + 1, cpuStringLimit - 1);
 
     /*CPU TEMPERATURE*/
     lv_label_set_text(ui_cpu_temp, cpuString1.c_str());
     /*CPU LOAD, ALL CORES*/
     lv_label_set_text(ui_cpu_percent, cpuString2.c_str());
 
-  //------------------------------------------ GPU Load/Temp -------------------------------------------------//
+    //------------------------------------------ GPU Load/Temp -------------------------------------------------//
 
-  /*GPU Display String*/
-  int gpuStringStart = inputString.indexOf("G", cpuStringLimit);
-  int gpuDegree = inputString.indexOf("c", gpuStringStart);
-  int gpuStringLimit = inputString.indexOf("|", gpuStringStart);
-  String gpuString1 = inputString.substring(gpuStringStart + 1, gpuDegree);
-  String gpuString2 = inputString.substring(gpuDegree + 1, gpuStringLimit - 1);
+    /*GPU Display String*/
+    int gpuStringStart = inputString.indexOf("G", cpuStringLimit);
+    int gpuDegree = inputString.indexOf("c", gpuStringStart);
+    int gpuStringLimit = inputString.indexOf("|", gpuStringStart);
+    String gpuString1 = inputString.substring(gpuStringStart + 1, gpuDegree);
+    String gpuString2 = inputString.substring(gpuDegree + 1, gpuStringLimit - 1);
 
     /*GPU TEMPERATURE*/
     lv_label_set_text(ui_gpu_temp, gpuString1.c_str());
     /*GPU LOAD*/
     lv_label_set_text(ui_gpu_percent, gpuString2.c_str());
 
-  //----------------------------------------SYSTEM  RAM TOTAL---------------------------------------------------//
-  /*SYSTEM RAM String*/
-  int ramStringStart = inputString.indexOf("R", gpuStringLimit);
-  int ramStringLimit = inputString.indexOf("|", ramStringStart);
-  String ramString = inputString.substring(ramStringStart + 1 , ramStringLimit);
+    //----------------------------------------SYSTEM  RAM TOTAL---------------------------------------------------//
+    /*SYSTEM RAM String*/
+    int ramStringStart = inputString.indexOf("R", gpuStringLimit);
+    int ramStringLimit = inputString.indexOf("|", ramStringStart);
+    String ramString = inputString.substring(ramStringStart + 1, ramStringLimit);
 
+    /*SYSTEM RAM AVALABLE String*/
+    int AramStringStart = inputString.indexOf("RA", ramStringLimit);
+    int AramStringLimit = inputString.indexOf("|", AramStringStart);
+    String AramString = inputString.substring(AramStringStart + 2, AramStringLimit);
 
-  /*SYSTEM RAM AVALABLE String*/
-  int AramStringStart = inputString.indexOf("RA", ramStringLimit);
-  int AramStringLimit = inputString.indexOf("|", AramStringStart);
-  String AramString = inputString.substring(AramStringStart + 2 , AramStringLimit);
+    /*SYSTEM RAM TOTAL String*/
+    double intRam = atof(ramString.c_str());
+    double intAram = atof(AramString.c_str());
+    // double  intRamSum = intRam + intAram;
+    float intRamSum = intRam + intAram; // float to handle the decimal point when printed (intRamSum,0)
 
-  /*SYSTEM RAM TOTAL String*/
-  double intRam = atof(ramString.c_str());
-  double intAram = atof(AramString.c_str());
-  //double  intRamSum = intRam + intAram;
-  float  intRamSum = intRam + intAram; //float to handle the decimal point when printed (intRamSum,0)
-
-  /*RAM USED/TOTAL*/
+    /*RAM USED/TOTAL*/
     {
         char ramBuf[24];
         snprintf(ramBuf, sizeof(ramBuf), "%s/%.0fGB", ramString.c_str(), intRamSum);
         lv_label_set_text(ui_RAM, ramBuf);
     }
 
-
-
     //------------------------------------------ CPU Freq -------------------------------------------------//
 
-  /*CPU Freq Display String*/
-  int cpuCoreClockStart = inputString.indexOf("CHC") + 3;
-  int cpuCoreClockEnd = inputString.indexOf("|", cpuCoreClockStart);
-  String cpuClockString = inputString.substring(cpuCoreClockStart, cpuCoreClockEnd);
+    /*CPU Freq Display String*/
+    int cpuCoreClockStart = inputString.indexOf("CHC") + 3;
+    int cpuCoreClockEnd = inputString.indexOf("|", cpuCoreClockStart);
+    String cpuClockString = inputString.substring(cpuCoreClockStart, cpuCoreClockEnd);
 
-  /*CPU Core Freq*/
+    /*CPU Core Freq*/
     {
         String mhz = cpuClockString + String("MHz");
         lv_label_set_text(ui_mhz, mhz.c_str());
     }
 
-   //---------------------------------------------Total GPU Memory-----------------------------------------------------------
+    //---------------------------------------------Total GPU Memory-----------------------------------------------------------
 
-   int gpuMemoryStart = inputString.indexOf("GMT") + 3;
-   int gpuMemoryEnd = inputString.indexOf("|", gpuMemoryStart);
-   String gpuMemoryString = inputString.substring(gpuMemoryStart, gpuMemoryEnd);
- 
-   double totalGPUmem = atof(gpuMemoryString.c_str());
-   double totalGPUmemSum = totalGPUmem / 1024;    // divide by 1024 to get the correct value
-   float  totalGPUmemSumDP = totalGPUmemSum ;     // float to handle the decimal point when printed (totalGPUmemSumDP, 0)
+    int gpuMemoryStart = inputString.indexOf("GMT") + 3;
+    int gpuMemoryEnd = inputString.indexOf("|", gpuMemoryStart);
+    String gpuMemoryString = inputString.substring(gpuMemoryStart, gpuMemoryEnd);
+
+    double totalGPUmem = atof(gpuMemoryString.c_str());
+    double totalGPUmemSum = totalGPUmem / 1024; // divide by 1024 to get the correct value
+    float totalGPUmemSumDP = totalGPUmemSum;    // float to handle the decimal point when printed (totalGPUmemSumDP, 0)
 
     {
         char vramBuf[16];
@@ -144,10 +145,9 @@ void style_01(DEVICES* _device) {
     }
 }
 
-
 namespace MOONCAKE::APPS
 {
-    PCMonitor::PCMonitor(DEVICES* device)
+    PCMonitor::PCMonitor(DEVICES *device)
         : _device(device)
     {
         setAppInfo().name = "PCMonitor";
@@ -185,16 +185,19 @@ namespace MOONCAKE::APPS
     void PCMonitor::onRunning()
     {
         // Update PC Monitor
-        while (Serial0.available()) {          
-            char inChar = (char)Serial0.read();  
+        while (Serial0.available())
+        {
+            char inChar = (char)Serial0.read();
             inputString += inChar;
-            if (inChar == '|') {
+            if (inChar == '|')
+            {
                 stringComplete = true;
                 delay(Serial0_eventDelay);
             }
         }
 
-        if (stringComplete) {
+        if (stringComplete)
+        {
             s_hasData = true; // Receive the first complete frame of data
             style_01(_device);
             inputString = "";

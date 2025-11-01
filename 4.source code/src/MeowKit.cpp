@@ -1,11 +1,11 @@
 /**
- * @file 
- * @author 
+ * @file
+ * @author
  * @brief
- * @version 
- * @date 
+ * @version
+ * @date
  *
- * @copyright 
+ * @copyright
  *
  */
 #include "MeowKit.h"
@@ -15,7 +15,8 @@ void MeowKit::Setup()
     printf("[MeowKit] Setup\n");
     /* Create bsp */
     _device = new DEVICES;
-    if (_device == NULL) {
+    if (_device == NULL)
+    {
         printf("[MeowKit] bsp create failed\n");
     }
 
@@ -25,11 +26,10 @@ void MeowKit::Setup()
     /* Create launcher */
     _launcher = std::unique_ptr<Launcher>(new Launcher(_device));
     _launcher->onCreate();
-    
 }
 
-void MeowKit::Loop() 
-{    
+void MeowKit::Loop()
+{
     _launcher->onLoop();
 }
 
@@ -42,6 +42,7 @@ void MeowKit::Destroy()
     }
 }
 
-MeowKit::~MeowKit() {
+MeowKit::~MeowKit()
+{
     Destroy();
 }

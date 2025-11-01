@@ -17,13 +17,15 @@ namespace MOONCAKE::APPS
     /**
      * @brief PC Monitor app
      */
-    class PCMonitor : public AppAbility {
+    class PCMonitor : public AppAbility
+    {
     public:
-        PCMonitor(DEVICES* device);
+        PCMonitor(DEVICES *device);
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
+
     private:
-        DEVICES* _device = nullptr;
+        DEVICES *_device = nullptr;
     };
 }
