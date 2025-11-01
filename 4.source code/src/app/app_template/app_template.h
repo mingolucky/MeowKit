@@ -3,7 +3,7 @@
  * @author Mingo
  * @brief App template for Mooncake
  * @version 0.1
- * @date 
+ * @date
  * @copyright Copyright (c) 2025
  */
 #pragma once
@@ -18,14 +18,16 @@ namespace MOONCAKE::APPS
     /**
      * @brief AppTemplate Demo
      */
-    class AppTemplate : public AppAbility {
+    class AppTemplate : public AppAbility
+    {
     public:
-        AppTemplate(DEVICES* device);  
+        AppTemplate(DEVICES *device);
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
+
     private:
-        DEVICES* _device = nullptr;   
+        DEVICES *_device = nullptr;
         DigitalRainAnimation<Meow_LGFX> matrix_effect;
     };
 }

@@ -7,5 +7,4 @@ struct DeviceStatus_t _device_status = {
     .powerDetection = false,
     .brightness = 127,
     .volume = 50,
-    .autoScreenOffTime = 20000
-};
+    .autoScreenOffTime = 20000};

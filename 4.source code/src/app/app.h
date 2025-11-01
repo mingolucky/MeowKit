@@ -17,18 +17,19 @@
 #include <mooncake.h>
 #include <memory>
 #if __cplusplus <= 201103L
-namespace std {
+namespace std
+{
     template <typename T, typename... Args>
-    std::unique_ptr<T> make_unique(Args&&... args) {
+    std::unique_ptr<T> make_unique(Args &&...args)
+    {
         return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
 }
 #endif
 
-
 /* Header files locator(Don't remove) */
 
-inline void MeowKit_app_install_callback(mooncake::Mooncake* mooncake, DEVICES* device)
+inline void MeowKit_app_install_callback(mooncake::Mooncake *mooncake, DEVICES *device)
 {
     /* Install app locator(Don't remove) */
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::BleBeacon>(device));
@@ -45,7 +46,6 @@ inline void MeowKit_app_install_callback(mooncake::Mooncake* mooncake, DEVICES* 
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::PCMonitor>(device));
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::VUMeter>(device));
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::RetroTV>(device));
-    
 
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::AppTemplate>(device));
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::AppTemplate>(device));
@@ -53,5 +53,4 @@ inline void MeowKit_app_install_callback(mooncake::Mooncake* mooncake, DEVICES* 
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::AppTemplate>(device));
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::AppTemplate>(device));
     mooncake->installApp(std::make_unique<MOONCAKE::APPS::AppTemplate>(device));
-
 }

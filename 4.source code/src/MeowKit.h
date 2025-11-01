@@ -17,13 +17,13 @@ using namespace MOONCAKE::APPS;
 
 class MeowKit
 {
-    public:
-        ~MeowKit();
-        void Setup();
-        void Loop();
-        void Destroy();
-        
-    private:
-        DEVICES* _device = nullptr; // Bsp devices
-        std::unique_ptr<Launcher> _launcher = nullptr;
+public:
+    ~MeowKit();
+    void Setup();
+    void Loop();
+    void Destroy();
+
+private:
+    DEVICES *_device = nullptr; // Bsp devices
+    std::unique_ptr<Launcher> _launcher = nullptr;
 };

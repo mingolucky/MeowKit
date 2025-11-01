@@ -28,15 +28,16 @@ namespace MOONCAKE::APPS
     /**
      * @brief MUSIC app
      */
-    class MUSIC : public AppAbility {
+    class MUSIC : public AppAbility
+    {
     public:
-        MUSIC(DEVICES* device);
+        MUSIC(DEVICES *device);
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
 
     private:
-        DEVICES* _device = nullptr;
+        DEVICES *_device = nullptr;
         Audio _audio;
         std::vector<String> _musicFiles;
         int _currentIndex = 0;
@@ -47,14 +48,14 @@ namespace MOONCAKE::APPS
         // Start the currently indexed song. Return true if successful and set _isPlaying
         bool startCurrent();
         // LVGL screen for MUSIC app
-        lv_obj_t* _screen = nullptr;
+        lv_obj_t *_screen = nullptr;
         // UI objects
-        lv_obj_t* _bg = nullptr;
-        lv_obj_t* _btnAImg = nullptr;
-        lv_obj_t* _btnBImg = nullptr;
-        lv_obj_t* _btnALabel = nullptr;
-        lv_obj_t* _btnBLabel = nullptr;
-        lv_obj_t* _infoLabel = nullptr; // center text: filename + time
+        lv_obj_t *_bg = nullptr;
+        lv_obj_t *_btnAImg = nullptr;
+        lv_obj_t *_btnBImg = nullptr;
+        lv_obj_t *_btnALabel = nullptr;
+        lv_obj_t *_btnBLabel = nullptr;
+        lv_obj_t *_infoLabel = nullptr; // center text: filename + time
         uint32_t _lastUiUpdate = 0;
     };
 }

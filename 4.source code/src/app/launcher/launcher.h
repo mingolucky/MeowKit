@@ -26,10 +26,10 @@ namespace MOONCAKE
         class Launcher
         {
         public:
-             Launcher(DEVICES* device) : _device(device) {}
-             void onCreate();
-             void onLoop();
-             void onDestroy();
+            Launcher(DEVICES *device) : _device(device) {}
+            void onCreate();
+            void onLoop();
+            void onDestroy();
 
         private:
             void reInitUI(int pageIndex);
@@ -39,7 +39,6 @@ namespace MOONCAKE
             void ui_clock_update();
 
         private:
-            
             std::unique_ptr<Mooncake> _mooncake = nullptr;
             DEVICES *_device = nullptr;
             bool _lvgl_enable = false;

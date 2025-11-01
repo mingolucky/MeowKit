@@ -18,13 +18,15 @@ namespace MOONCAKE::APPS
     /**
      * @brief Game应用
      */
-    class Dino : public AppAbility {
+    class Dino : public AppAbility
+    {
     public:
-        Dino(DEVICES* device);
+        Dino(DEVICES *device);
         void onOpen() override;
         void onRunning() override;
         void onClose() override;
+
     private:
-        DEVICES* _device = nullptr;
+        DEVICES *_device = nullptr;
     };
 }

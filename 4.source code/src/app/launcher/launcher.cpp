@@ -85,13 +85,11 @@ namespace MOONCAKE
                     if (_device->button.B.isLongPress())
                     {
                         reInitUI(selected_app_index);
-           
+
                         break;
                     }
                 }
-                
             }
-            
         }
 
         void Launcher::updateDeviceStatus()
@@ -129,9 +127,9 @@ namespace MOONCAKE
             if (_device_status.powerDetection == false)
             {
                 // Throttling + Smoothing: Update at most once every 30 seconds; update the value only when the difference is >= 2, to avoid jumping back and forth between 78/79
-                static unsigned long last_bat_check = 0; 
-                static int last_shown_percent = -1;      
-                static float filtered_percent = -1.0f;   
+                static unsigned long last_bat_check = 0;
+                static int last_shown_percent = -1;
+                static float filtered_percent = -1.0f;
 
                 unsigned long now = millis();
                 int cur_percent = _device->getBatteryPercent();
@@ -230,7 +228,7 @@ namespace MOONCAKE
             _mooncake = std::make_unique<mooncake::Mooncake>();
             MeowKit_app_install_callback(_mooncake.get(), _device);
 
-            luaScriptManager& manager = luaScriptManager::getInstance();
+            luaScriptManager &manager = luaScriptManager::getInstance();
             // set device
             manager.setDevice(_device);
             // load all scripts
