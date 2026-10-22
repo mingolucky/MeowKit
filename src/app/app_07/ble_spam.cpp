@@ -2,24 +2,30 @@
  * @file app_08.cpp
  * @author Mingo
  * @brief App07 — BLE Spam implementation
- *        v4.0: Migrated to TUI (LovyanGFX direct drawing, app_10 style)
+ *        v4.0: Migrated to TUI (LovyanGFX direct drawing, app_08 style)
  * @version 4.0
  * @date 2026-05-12
  * @copyright Copyright (c) 2025
  */
 #include "ble_spam.h"
+#ifndef APP07_HOST_TEST
 #include "../../system/bluetooth_manager.h"
+#endif
 static bluetooth_manager::Lease s_btLease=0;
+#ifndef APP07_HOST_TEST
 #include "../app_common/hp_ui.h"
+#endif
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#ifndef APP07_HOST_TEST
 #include <esp_random.h>
 #include <esp_bt.h>
 #include <esp_gap_ble_api.h>
+#endif
 #include <string>
 
-/* ── Layout constants (same as app_10) ── */
+/* ── Layout constants (same as app_08) ── */
 static constexpr int SCR_W        = hp::W;
 static constexpr int SCR_H        = hp::H;
 static constexpr int HDR_H        = hp::CON_Y0;          // 18
@@ -250,7 +256,7 @@ void App07::onRunning()
 
     const bool bDown = (_device->button.B.state() == Button_Class::PRESSED);
     if (bDown && !_bHeld) {
-        _bBackPending = (_page == BsPage::Running);
+        _bBackPending = (_page != BsPage::MainMenu);
         _stopSpam();  // Stop immediately, even before the hold threshold.
         if (_page == BsPage::Running) {
             _drawRunningStatic();
@@ -286,6 +292,13 @@ void App07::onRunning()
     case BsPage::Running:  _updateRunning(); break;
     }
 
+    // A menu selection renders its destination in the same iteration.
+    if (_sceneDirty) {
+        _sceneDirty = false;
+        if (_page == BsPage::Running) _enterRunning();
+        else _enterMainMenu();
+    }
+
     /* Keep LED animation ticking (used during broadcasting). */
     if (_ledActive) _device->led.update();
 }
@@ -309,7 +322,7 @@ void App07::_switchPage(BsPage p)
 }
 
 /* ══════════════════════════════════════════════════════════════
- *  TUI drawing helpers (app_10 style)
+ *  TUI drawing helpers (app_08 style)
  * ══════════════════════════════════════════════════════════════ */
 void App07::_drawHeader(const char* title)
 {
@@ -412,7 +425,8 @@ void App07::_runMainMenu()
     }
 
     if (_device->button.A.pressed()) {
-        _attackIdx = _menuSel + _scrollOffset;
+        const int selected = _menuSel + _scrollOffset;
+        _attackIdx = selected;
         _switchPage(BsPage::Running);   /* Enter running page idle; press A to start */
     }
     /* Short B stays at the top-level menu. Hold B exits via Launcher. */
@@ -553,7 +567,7 @@ void App07::_updateRunning()
     }
 
     /* Repaint status ~5 fps (or instantly if interval changed) */
-    if (intervalChanged || (now - _lastDrawTime >= 200)) {
+    if (intervalChanged || (_advertising && now - _lastDrawTime >= 200)) {
         _lastDrawTime = now;
         _drawRunningStatus();
     }
@@ -682,6 +696,7 @@ void App07::_stopSpam()
         _advRunning = false;
     }
     _setLedActive(false);
+    _deinitBLE(); // Release the Bluetooth lease on stop, including repeated stops.
 }
 
 /* ══════════════════════════════════════════════════════════════

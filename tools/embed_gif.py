@@ -1,7 +1,8 @@
 """
 PlatformIO pre-build extra script.
-Converts boot_animation.gif → splash_gif_data.S  (GNU AS .incbin, instant)
-                       → splash_gif.h       (tiny extern declarations)
+Embeds boot_animation.gif and system MP3s from src/system/assets.
+Converts the GIF to splash_gif_data.S (GNU AS .incbin, instant)
+               and splash_gif.h      (tiny extern declarations).
 
 Result: GIF bytes land in Flash RODATA with zero C compilation overhead.
 """
@@ -9,7 +10,8 @@ Import("env")  # noqa: F821  (PlatformIO SCons magic)
 import os
 
 project_dir = env.subst("$PROJECT_DIR")
-gif_path    = os.path.join(project_dir, "boot_animation.gif")
+system_asset_dir = os.path.join(project_dir, "src", "system", "assets")
+gif_path    = os.path.join(system_asset_dir, "boot_animation.gif")
 splash_dir  = os.path.join(project_dir, "src", "splash")
 
 asm_out = os.path.join(splash_dir, "splash_gif_data.S")
@@ -19,8 +21,8 @@ gif_exists = os.path.isfile(gif_path)
 gif_size   = os.path.getsize(gif_path) if gif_exists else 0
 gif_fwd    = gif_path.replace("\\", "/")   # GAS requires forward slashes on Windows
 
-boot_mp3_path = os.path.join(project_dir, "boot_sound effects.mp3")
-button_mp3_path = os.path.join(project_dir, "button_sound effects.mp3")
+boot_mp3_path = os.path.join(system_asset_dir, "boot_sound effects.mp3")
+button_mp3_path = os.path.join(system_asset_dir, "button_sound effects.mp3")
 sound_asm_out = os.path.join(project_dir, "src", "system", "system_sound_assets.S")
 sound_cpp_out = os.path.join(project_dir, "src", "system", "system_sound_assets.cpp")
 

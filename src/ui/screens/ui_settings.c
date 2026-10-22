@@ -91,10 +91,18 @@ static void ui_event_info_button_click(lv_event_t * e)
 
     static const char * buttons[] = {"OK", ""};
     s_info_dialog = lv_msgbox_create(lv_scr_act(),
-                                     "About MeowKit",
-                                     "Firmware " FIRMWARE_VERSION "\nAuthor: Mingo",
+                                     PROJECT_NAME,
+                                     "Firmware " FIRMWARE_VERSION,
                                      buttons, false);
     lv_obj_set_width(s_info_dialog, 250);
+    lv_obj_set_flex_align(s_info_dialog, LV_FLEX_ALIGN_CENTER,
+                          LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_text_align(lv_msgbox_get_title(s_info_dialog),
+                                LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_align(lv_msgbox_get_text(s_info_dialog),
+                                LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_align(lv_msgbox_get_btns(s_info_dialog),
+                                LV_TEXT_ALIGN_CENTER, LV_PART_ITEMS);
     lv_obj_set_style_bg_color(s_info_dialog, lv_color_hex(0x171717),
                               LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_color(s_info_dialog, lv_color_hex(0xBEE700),

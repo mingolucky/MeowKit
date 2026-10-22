@@ -12,6 +12,7 @@
  *   helpers/ducky_script.c, ducky_script_commands.c, ducky_script_keycodes.c
  */
 #include "badusb.h"
+#include "badusb_parse_utils.h"
 #include "../app_common/hp_ui.h"
 #include <SD_MMC.h>
 #include <FS.h>
@@ -865,12 +866,21 @@ void AppBadUSB::_drawRunningDynamic()
     if (_execState != _lastDrawnState) {
         _drawStateBadge();
         _drawRunningFooter();
-        if (_mode == BuMode::BLE && _execState == ExecState::Error) {
+        if (_execState == ExecState::Error) {
             Lcd.fillRect(2,192,316,20,BU_BG);
             Lcd.setFont(&fonts::efontCN_16);
             Lcd.setTextColor(TFT_RED,BU_BG);
             Lcd.setCursor(4,194);
-            Lcd.print(_errMsg.c_str());
+            Lcd.printf("L%u: %.32s", unsigned(_errLine), _errMsg.c_str());
+        } else if (_lastDrawnState == ExecState::Error) {
+            // Restore the layout label after leaving ERROR; don't leave stale text.
+            Lcd.fillRect(2,192,316,20,BU_BG);
+            Lcd.setFont(&fonts::efontCN_16);
+            Lcd.setTextColor(BU_FG,BU_BG);
+            char label[40];
+            snprintf(label, sizeof(label), "layout: %s", _layoutName.c_str());
+            Lcd.setCursor((SCR_W - int(strlen(label)) * 8) / 2, 194);
+            Lcd.print(label);
         }
         _lastDrawnState = _execState;
     }
@@ -994,6 +1004,14 @@ void AppBadUSB::_updateRunning()
             _execState=ExecState::Error;
         }
     }
+    if (_mode == BuMode::USB && !_isConnected()
+        && (_execState == ExecState::Running || _execState == ExecState::Delay
+            || _execState == ExecState::StringDelay || _execState == ExecState::WaitButton)) {
+        _stopExec();
+        _errMsg = "USB disconnected. Run again.";
+        _errLine = _lineIdx;
+        _execState = ExecState::Error;
+    }
     /* --- State-independent inputs --- */
     /* Any direction key = enter Layouts (Config). If a script is actively
      * running, stop it first (releases all keys) so we don't leave the host
@@ -1036,10 +1054,11 @@ void AppBadUSB::_updateRunning()
 
     /* --- Connected, awaiting [A] to start --- */
     case ExecState::Ready:
-        if (_device->button.A.pressed()) {
-            _startExec();
-        } else if (!_isConnected()) {
+        if (!_isConnected()) {
+            _device->button.A.pressed(); // Consume a press after the host has gone away.
             _execState = ExecState::WaitConnect;
+        } else if (_device->button.A.pressed()) {
+            _startExec();
         }
         if (now - _lastDraw > 200) { _drawRunningDynamic(); _lastDraw = now; }
         break;
@@ -1085,7 +1104,7 @@ void AppBadUSB::_updateRunning()
             _execEndTime = millis();
             break;
         }
-        if (now >= _delayEnd) _execState = ExecState::Running;
+        if (badusb_parse::deadlineReached(now, _delayEnd)) _execState = ExecState::Running;
         if (now - _lastDraw > 100) { _drawRunningDynamic(); _lastDraw = now; }
         break;
 
@@ -1096,7 +1115,7 @@ void AppBadUSB::_updateRunning()
             _execEndTime = millis();
             break;
         }
-        if (now >= _delayEnd && _printPos < _printStr.size()) {
+        if (badusb_parse::deadlineReached(now, _delayEnd) && _printPos < _printStr.size()) {
             char c = _printStr[_printPos];
             if (c != '\n') {
                 _kbdWrite((uint8_t)c);
@@ -1164,7 +1183,7 @@ void AppBadUSB::_updateRunning()
             }
 
             if (r > 0) {
-                _delayEnd  = millis() + (unsigned long)r + _defDelay;
+                _delayEnd  = millis() + badusb_parse::delaySum(uint32_t(r), _defDelay);
                 _execState = ExecState::Delay;
             } else if (r == -2) {
                 _execState = ExecState::WaitButton;
@@ -1382,6 +1401,7 @@ bool AppBadUSB::_loadScript(const char* path)
 
     while (f.available()) {
         String ln = f.readStringUntil('\n');
+        if (_lines.empty() && ln.startsWith("\xEF\xBB\xBF")) ln.remove(0, 3);
         while (ln.length() > 0) {
             char c = ln.charAt(ln.length() - 1);
             if (c == '\r' || c == ' ' || c == '\t')
@@ -1477,33 +1497,25 @@ const char* AppBadUSB::_skipWs(const char* p)
 
 bool AppBadUSB::_isEnd(char c)
 {
-    return c == ' ' || c == '\0' || c == '\r' || c == '\n';
+    return c == ' ' || c == '\t' || c == '\0' || c == '\r' || c == '\n';
 }
 
 uint32_t AppBadUSB::_cmdLen(const char* line)
 {
-    const char* sp = strchr(line, ' ');
-    return sp ? (uint32_t)(sp - line) : (uint32_t)strlen(line);
+    return badusb_parse::commandLength(line);
 }
 
 bool AppBadUSB::_parseUint(const char* s, uint32_t& v)
 {
-    v = 0;
-    s = _skipWs(s);
-    if (!*s || *s < '0' || *s > '9') return false;
-    while (*s >= '0' && *s <= '9') { v = v * 10 + (*s - '0'); s++; }
+    uint32_t parsed;
+    if (!badusb_parse::unsignedValue(s, parsed) || parsed > uint32_t(INT32_MAX)) return false;
+    v = parsed;
     return true;
 }
 
 bool AppBadUSB::_parseInt(const char* s, int32_t& v)
 {
-    s = _skipWs(s);
-    bool neg = false;
-    if (*s == '-') { neg = true; s++; }
-    uint32_t u = 0;
-    if (!_parseUint(s, u)) return false;
-    v = neg ? -(int32_t)u : (int32_t)u;
-    return true;
+    return badusb_parse::signedValue(s, v);
 }
 
 uint8_t AppBadUSB::_nextMod(const char** p)
@@ -1588,11 +1600,12 @@ int32_t AppBadUSB::_parseLine(const char* line)
     if (strncmp(line, "BLE_ID", 6) == 0)                  return -1;
 
     uint32_t cl = _cmdLen(line);
+    const char* param = badusb_parse::arguments(line, cl);
 
     /* --- DELAY n --- */
     if (cl == 5 && strncmp(line, "DELAY", 5) == 0) {
         uint32_t ms = 0;
-        if (_parseUint(line + 6, ms)) return (int32_t)ms;
+        if (_parseUint(param, ms)) return (int32_t)ms;
         _errMsg = "DELAY: bad number";
         return -10;
     }
@@ -1600,7 +1613,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
     /* --- DEFAULT_DELAY / DEFAULTDELAY --- */
     if ((cl == 13 && strncmp(line, "DEFAULT_DELAY", 13) == 0) ||
         (cl == 12 && strncmp(line, "DEFAULTDELAY", 12) == 0)) {
-        if (_parseUint(line + cl + 1, _defDelay)) return 0;
+        if (_parseUint(param, _defDelay)) return 0;
         _errMsg = "DEFAULTDELAY: bad number";
         return -10;
     }
@@ -1608,7 +1621,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
     /* --- STRING_DELAY / STRINGDELAY --- */
     if ((cl == 12 && strncmp(line, "STRING_DELAY", 12) == 0) ||
         (cl == 11 && strncmp(line, "STRINGDELAY", 11) == 0)) {
-        if (_parseUint(line + cl + 1, _strDelay)) return 0;
+        if (_parseUint(param, _strDelay)) return 0;
         _errMsg = "STRINGDELAY: bad number";
         return -10;
     }
@@ -1616,14 +1629,14 @@ int32_t AppBadUSB::_parseLine(const char* line)
     /* --- DEFAULT_STRING_DELAY / DEFAULTSTRINGDELAY --- */
     if ((cl == 20 && strncmp(line, "DEFAULT_STRING_DELAY", 20) == 0) ||
         (cl == 19 && strncmp(line, "DEFAULTSTRINGDELAY", 19) == 0)) {
-        if (_parseUint(line + cl + 1, _defStrDelay)) return 0;
+        if (_parseUint(param, _defStrDelay)) return 0;
         _errMsg = "DEFSTRINGDELAY: bad number";
         return -10;
     }
 
     /* --- STRINGLN text --- */
     if (cl == 8 && strncmp(line, "STRINGLN", 8) == 0) {
-        const char* text = (strlen(line) > 9) ? line + 9 : "";
+        const char* text = param;
         uint32_t sd = _strDelay > 0 ? _strDelay : _defStrDelay;
         if (sd > 0) {
             _printStr  = text;
@@ -1639,7 +1652,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
 
     /* --- STRING text --- */
     if (cl == 6 && strncmp(line, "STRING", 6) == 0) {
-        const char* text = (strlen(line) > 7) ? line + 7 : "";
+        const char* text = (strlen(line) > 7) ? param : "";
         uint32_t sd = _strDelay > 0 ? _strDelay : _defStrDelay;
         if (sd > 0) {
             _printStr = text;
@@ -1653,14 +1666,17 @@ int32_t AppBadUSB::_parseLine(const char* line)
 
     /* --- REPEAT n --- */
     if (cl == 6 && strncmp(line, "REPEAT", 6) == 0) {
-        if (_parseUint(line + 7, _repeatCnt) && _repeatCnt > 0) return 0;
+        if (_parseUint(param, _repeatCnt) && _repeatCnt > 0) return 0;
         _errMsg = "REPEAT: bad number";
         return -10;
     }
 
     /* --- SYSRQ key --- */
     if (cl == 5 && strncmp(line, "SYSRQ", 5) == 0) {
-        const char* kn = _skipWs(line + 6);
+        const char* kn = _skipWs(param);
+        if (!_keyByName(kn) && !(strlen(kn) == 1 && *kn >= 0x20 && *kn <= 0x7E)) {
+            _errMsg = "SYSRQ: missing/unknown key"; return -10;
+        }
         _kbdPress(KEY_LEFT_ALT);
         _kbdPress(KEY_PRTSCR);
         uint8_t k = _keyByName(kn);
@@ -1673,8 +1689,12 @@ int32_t AppBadUSB::_parseLine(const char* line)
 
     /* --- ALTCHAR charcode --- */
     if (cl == 7 && strncmp(line, "ALTCHAR", 7) == 0) {
+        uint32_t code;
+        if (!badusb_parse::unsignedValue(param, code)) {
+            _errMsg = "ALTCHAR: bad number"; return -10;
+        }
         _numlockOn();
-        _altChar(_skipWs(line + 8));
+        _altChar(_skipWs(param));
         return 0;
     }
 
@@ -1682,7 +1702,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
     if ((cl == 9 && strncmp(line, "ALTSTRING", 9) == 0) ||
         (cl == 7 && strncmp(line, "ALTCODE", 7) == 0)) {
         _numlockOn();
-        _altString(_skipWs(line + cl + 1));
+        _altString(_skipWs(param));
         return 0;
     }
 
@@ -1707,7 +1727,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
     /* --- RELEASE key --- */
     if (cl == 7 && strncmp(line, "RELEASE", 7) == 0) {
         if (_keyHoldNb == 0) { _errMsg = "No keys held"; return -10; }
-        const char* kn = (strlen(line) > 8) ? _skipWs(line + 8) : "";
+        const char* kn = (strlen(line) > 8) ? _skipWs(param) : "";
         if (!*kn) { _errMsg = "RELEASE: missing key"; return -10; }
         uint8_t mb = _mouseByName(kn);
         if (mb) { _keyHoldNb--; _mouseRelease(mb); return 0; }
@@ -1720,11 +1740,11 @@ int32_t AppBadUSB::_parseLine(const char* line)
     }
 
     /* --- WAIT_FOR_BUTTON_PRESS --- */
-    if (strncmp(line, "WAIT_FOR_BUTTON_PRESS", 21) == 0) return -2;
+    if (cl == 21 && strncmp(line, "WAIT_FOR_BUTTON_PRESS", 21) == 0 && !*param) return -2;
 
     /* --- MEDIA key --- */
     if (cl == 5 && strncmp(line, "MEDIA", 5) == 0) {
-        const char* kn = _skipWs(line + 6);
+        const char* kn = _skipWs(param);
         uint16_t mc = _mediaByName(kn);
         if (mc) { _consumerPress(mc); _consumerRelease(); return 0; }
         _errMsg = "MEDIA: unknown key"; return -10;
@@ -1732,7 +1752,7 @@ int32_t AppBadUSB::_parseLine(const char* line)
 
     /* --- GLOBE key (macOS Fn/Globe + key) --- */
     if (cl == 5 && strncmp(line, "GLOBE", 5) == 0) {
-        const char* kn = _skipWs(line + 6);
+        const char* kn = _skipWs(param);
         uint8_t k = _keyByName(kn);
         if (!k && strlen(kn) == 1) k = (uint8_t)kn[0];
         if (!k) { _errMsg = "GLOBE: unknown key"; return -10; }
@@ -1745,11 +1765,13 @@ int32_t AppBadUSB::_parseLine(const char* line)
     /* --- MOUSEMOVE / MOUSE_MOVE x y --- */
     if ((cl == 9 && strncmp(line, "MOUSEMOVE", 9) == 0) ||
         (cl == 10 && strncmp(line, "MOUSE_MOVE", 10) == 0)) {
-        const char* args = _skipWs(line + cl + 1);
+        const char* args = _skipWs(param);
         int32_t mx = 0, my = 0;
-        if (!_parseInt(args, mx)) { _errMsg = "MOUSEMOVE: bad X"; return -10; }
-        args = strchr(args, ' ');
-        if (!args || !_parseInt(args, my)) { _errMsg = "MOUSEMOVE: bad Y"; return -10; }
+        if (!badusb_parse::signedToken(args, mx)) { _errMsg = "MOUSEMOVE: bad X"; return -10; }
+        if (!badusb_parse::signedValue(args, my)) { _errMsg = "MOUSEMOVE: bad Y"; return -10; }
+        if (mx < -127 || mx > 127 || my < -127 || my > 127) {
+            _errMsg = "MOUSEMOVE: range -127..127"; return -10;
+        }
         _mouseMove((int8_t)mx, (int8_t)my);
         return 0;
     }
@@ -1758,7 +1780,8 @@ int32_t AppBadUSB::_parseLine(const char* line)
     if ((cl == 11 && strncmp(line, "MOUSESCROLL", 11) == 0) ||
         (cl == 12 && strncmp(line, "MOUSE_SCROLL", 12) == 0)) {
         int32_t s = 0;
-        if (!_parseInt(line + cl + 1, s)) { _errMsg = "MOUSESCROLL: bad N"; return -10; }
+        if (!_parseInt(param, s)) { _errMsg = "MOUSESCROLL: bad N"; return -10; }
+        if (s < -127 || s > 127) { _errMsg = "MOUSESCROLL: range -127..127"; return -10; }
         _mouseScroll((int8_t)s);
         return 0;
     }
@@ -1788,13 +1811,15 @@ int32_t AppBadUSB::_parseLine(const char* line)
         }
 
         if (nMod > 0) {
-            for (int i = 0; i < nMod; i++) _kbdPress(mods[i]);
             p = _skipWs(p);
-            if (*p != '\0') {
-                uint8_t k = _keyByName(p);
-                if (k) _kbdPress(k);
-                else if (strlen(p) == 1) _kbdPress((uint8_t)p[0]);
+            uint8_t k = 0;
+            if (*p) {
+                k = _keyByName(p);
+                if (!k && strlen(p) == 1 && *p >= 0x20 && *p <= 0x7E) k = uint8_t(*p);
+                if (!k) { _errMsg = "Unknown combo key"; return -10; }
             }
+            for (int i = 0; i < nMod; i++) _kbdPress(mods[i]);
+            if (k) _kbdPress(k);
             delay(10);
             _kbdReleaseAll();
             return 0;
@@ -1814,7 +1839,8 @@ int32_t AppBadUSB::_parseLine(const char* line)
     }
 
     Serial.printf("[BadUSB] Unknown cmd: %s\n", line);
-    return -1;
+    _errMsg = "Unknown command";
+    return -10;
 }
 
 /* ================================================================ */
@@ -1842,9 +1868,12 @@ void AppBadUSB::_kbdRelease(uint8_t k)
 
 void AppBadUSB::_kbdReleaseAll()
 {
+    _keyHoldNb = 0;
     if (_mode == BuMode::BLE) { bu_ble_release_all(); return; }
 #if ARDUINO_USB_MODE == 0
     usb_hid_kbd().releaseAll();
+    usb_hid_mouse().release(0x07);
+    usb_hid_consumer().release();
 #endif
 }
 

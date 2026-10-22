@@ -10,7 +10,7 @@ void PCMonitor::onOpen() {
     _parser.reset(); _hasData = false; _stale = false; _lastDataMs = 0;
     _previousScreen = lv_scr_act();
     ui_pc_monitor_init(); render(pc_monitor::Frame());
-    ui_pc_monitor_status("Connect USB - start the PC client", false);
+    ui_pc_monitor_status("", false);
 }
 void PCMonitor::onRunning() {
     bool updated = false;

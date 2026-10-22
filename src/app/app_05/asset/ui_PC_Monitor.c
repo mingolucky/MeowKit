@@ -102,7 +102,7 @@ void ui_pc_monitor_init(void) {
     ui_gpu_load_bar = meter(140, 201, 100, 20, false);
     ui_gpu_temp = number(245, 166, 43);
     ui_gpu_percent = number(245, 196, 43);
-    status_label = label(10, 230, 302, "Connect USB - start the PC client", &lv_font_montserrat_10, 0xFFFFFF);
+    status_label = label(10, 230, 302, "", &lv_font_montserrat_10, 0xFFFFFF);
     lv_obj_set_style_text_align(status_label, LV_TEXT_ALIGN_CENTER, 0);
     lv_scr_load(ui_PC_Monitor);
 }

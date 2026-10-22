@@ -12,9 +12,12 @@
  * Credits: @WillyJL, @ECTO-1A, @Spooks4576, @mandomat
  *
  * v4.0: Migrated UI from LvAppUI (LVGL) to direct LovyanGFX TUI drawing
- *       in the same green/white style used by app_10 (Bad USB).
+ *       in the same green/white style used by app_08 (Bad USB).
  */
 #pragma once
+#ifdef APP07_HOST_TEST
+#include "../../../test/app07_ui_stubs.h"
+#else
 #include <mooncake.h>
 #include "../../bsp/devices.h"
 #include <BLEDevice.h>
@@ -22,6 +25,8 @@
 #include <BLEServer.h>
 #include <esp_arduino_version.h>
 #include <LovyanGFX.hpp>
+
+#endif
 
 /* ── Max TX power per chip variant ── */
 #if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32C2) || defined(CONFIG_IDF_TARGET_ESP32S3)
@@ -40,7 +45,7 @@ namespace MOONCAKE::APPS
 /* ── Page IDs ── */
 enum class BsPage : uint8_t { MainMenu, Running };
 
-/* ── TUI colors (green + white, same palette as app_10) ── */
+/* ── TUI colors (green + white, same palette as app_08) ── */
 static constexpr uint16_t BS_BG        = TFT_BLACK;
 static constexpr uint16_t BS_FG        = 0x07E0;   /* pure green */
 static constexpr uint16_t BS_FG_DIM    = 0x03E0;   /* dark green */
@@ -62,7 +67,7 @@ private:
     bool   _sceneDirty = true;
     void   _switchPage(BsPage p);
 
-    /* ── TUI helpers (app_10 style) ── */
+    /* ── TUI helpers (app_08 style) ── */
     void _drawHeader(const char* title);
     void _drawMenuItem(int y, int index, const char* text, const char* sub, bool selected);
     void _drawFooter(const char* left, const char* right);

@@ -5,11 +5,13 @@
  * Render pipeline:
  *   1. memcpy bgPatch → workSpr   (fresh BG each frame)
  *   2. needle → workSpr           (chroma-keyed rotate/zoom)
- *   3. workSpr → LCD              (single push, no ghost trails)
+ *   3. alpha foreground mask -> workSpr (curved edge only)
+ *   4. workSpr -> LCD (single transfer, no ghost trails)
  *
  * PSRAM budget:
  *   _bgPatch      220×180×2 ≈  79 KB
  *   _workSpr      220×180×2 ≈  79 KB
+ *   _maskPixels   132 x 62 x 4 = 32 KB
  *   _needleSprite  12×(kNeedleLen+8)×2 ≈  3 KB
  */
 #pragma once
@@ -53,7 +55,7 @@ namespace MOONCAKE::APPS
         LGFX_Sprite* _bgPatch      = nullptr;
         LGFX_Sprite* _workSpr      = nullptr;
         LGFX_Sprite* _needleSprite = nullptr;
-        LGFX_Sprite* _maskSprite   = nullptr;
+        uint32_t*    _maskPixels   = nullptr; // cached ARGB foreground (32 KB)
 
         bool _codecReady = false;
         bool _i2sReady   = false;
@@ -66,11 +68,6 @@ namespace MOONCAKE::APPS
         static constexpr int32_t kPatchW = 220;
         static constexpr int32_t kPatchH = 180;
         static constexpr int32_t kWorkH  = 180;
-
-        static constexpr int32_t kMaskX = 94;
-        static constexpr int32_t kMaskY = 178;
-        static constexpr int32_t kMaskW = 132;
-        static constexpr int32_t kMaskH = 62;
 
         /* Chroma key for needle sprite (magenta) */
         static constexpr uint32_t kChroma24 = 0xFF00FFu;

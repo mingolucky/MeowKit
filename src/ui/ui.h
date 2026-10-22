@@ -81,10 +81,9 @@ LV_IMG_DECLARE(ui_img_retro_tv_png);       // App 04 Retro TV
 LV_IMG_DECLARE(ui_img_pc_montior_png);     // App 05 PC Monitor (alt spelling)
 LV_IMG_DECLARE(ui_img_air_mouse_png);      // App 06 Air Mouse
 LV_IMG_DECLARE(ui_img_music_png);          // App 07 Music (hidden)
-LV_IMG_DECLARE(ui_img_ble_spam_png);       // App 08 BLE Spam
-LV_IMG_DECLARE(ui_img_wifi_killer_png);    // App 09 (stub)
-LV_IMG_DECLARE(ui_img_badusb_png);         // App 10 BadUSB
-LV_IMG_DECLARE(ui_img_infrared_png);       // App 11 Infrared
+LV_IMG_DECLARE(ui_img_ble_spam_png);       // App 07 BLE Spam
+LV_IMG_DECLARE(ui_img_badusb_png);         // App 08 BadUSB
+LV_IMG_DECLARE(ui_img_infrared_png);       // App 09 Infrared
 LV_IMG_DECLARE(ui_img_nfc_png);            // App 12 (stub)
 LV_IMG_DECLARE(ui_img_smarthome_png);      // App 13 (stub)
 LV_IMG_DECLARE(ui_img_webserial_png);      // App 14 (stub)

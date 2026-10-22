@@ -5,7 +5,9 @@
 #include <algorithm>
 
 namespace {
-constexpr uint16_t BG=0x1A22, GREEN=0xC7E6, DIM=0x4A86, WHITE=0xFFFF;
+// RGB565 palette: near-black forest, lime accents and muted olive surfaces.
+constexpr uint16_t BG=0x10C2, GREEN=0xC7A7, DIM=0x6C26, WHITE=0xFFFF;
+constexpr uint16_t MESH=0x84E7, PANEL=0x3244, PANEL_ACTIVE=0x42E5, SCANLINE=0x3A65;
 constexpr int SX=174, SY=44, SW=142, SH=146;
 constexpr float GAINS[]={30.f,50.f,75.f};
 const char* SPEEDS[]={"Low","Normal","High"};
@@ -15,16 +17,16 @@ void text(lgfx::LGFXBase& lcd,int x,int y,const char* str,uint16_t color=GREEN) 
 }
 void globe(lgfx::LGFXBase& lcd,int cy) {
     lcd.drawCircle(88,cy,54,GREEN); lcd.drawCircle(88,cy,53,GREEN);
-    lcd.drawEllipse(88,cy,54,19,GREEN); lcd.drawEllipse(88,cy,54,42,GREEN);
-    lcd.drawEllipse(88,cy,18,54,GREEN); lcd.drawEllipse(88,cy,38,54,GREEN);
+    lcd.drawEllipse(88,cy,54,19,MESH); lcd.drawEllipse(88,cy,54,42,MESH);
+    lcd.drawEllipse(88,cy,18,54,MESH); lcd.drawEllipse(88,cy,38,54,MESH);
     lcd.drawFastHLine(70,cy,36,GREEN); lcd.drawFastVLine(88,cy-18,36,GREEN);
 }
 void scrollPanel(lgfx::LGFXBase& lcd,bool active) {
     lcd.drawRoundRect(SX,SY,SW,SH,4,GREEN);
     text(lcd,SX+10,SY+4,"Touch Scroll");
-    lcd.fillRect(SX+5,SY+22,SW-10,SH-28,active?0x32C4:0x2A83);
+    lcd.fillRect(SX+5,SY+22,SW-10,SH-28,active?PANEL_ACTIVE:PANEL);
     for(int y=SY+24;y<SY+SH-6;y+=4)
-        lcd.drawFastHLine(SX+8,y,SW-16,active?0x2A83:DIM);
+        lcd.drawFastHLine(SX+8,y,SW-16,active?PANEL:SCANLINE);
 }
 }
 namespace MOONCAKE::APPS {
@@ -208,7 +210,7 @@ void App06::onClose() {
 }
 void App06::_drawStaticUI() {
     auto& lcd=_device->Lcd; lcd.fillScreen(BG);
-    text(lcd,8,4,"[ AIR MOUSE ]",WHITE);
+    text(lcd,8,4,"["); text(lcd,24,4,"AIR MOUSE",WHITE); text(lcd,104,4,"]");
     lcd.drawFastHLine(0,24,320,GREEN); lcd.drawFastHLine(0,214,320,GREEN);
     scrollPanel(lcd,false);
     if(!_globe.getBuffer()) globe(lcd,109);

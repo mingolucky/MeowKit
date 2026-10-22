@@ -222,7 +222,7 @@ inline void clearListRow(LCD& lcd, int row)
     lcd.fillRect(1, y, w, ITEM_H, COL_BG);
 }
 
-/* Constants for two-line list item (App08 attack menu, AP list, etc.) */
+/* Constants for two-line list items */
 static constexpr int ITEM2_H    = 34;    // 2-line item: 1px top + 16 + 16 + 1px bottom
 static constexpr int LIST2_VIS  = CON_H / ITEM2_H;   // 5 visible rows
 

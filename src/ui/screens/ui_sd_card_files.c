@@ -96,12 +96,12 @@ static void _visit_entry(const char * name, int is_dir, void * user)
     else
         snprintf(it->path, sizeof(it->path), "%s/%s", _current_path, name);
 
-    /* 3 rows visible in 142px container: height=44, stride=46 */
+    /* Match the Wi-Fi list: 4 rows in a 152px container, 38px per row. */
     lv_obj_t * btn = lv_btn_create(_file_list);
     lv_obj_set_width(btn, 280);
-    lv_obj_set_height(btn, 44);
+    lv_obj_set_height(btn, 38);
     lv_obj_set_x(btn, 0);
-    lv_obj_set_y(btn, (lv_coord_t)(ctx->row * 46));
+    lv_obj_set_y(btn, (lv_coord_t)(ctx->row * 38));
     lv_obj_set_style_bg_opa(btn,   LV_OPA_TRANSP, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(btn, lv_color_hex(0xBBE700), LV_PART_MAIN | LV_STATE_PRESSED);
     lv_obj_set_style_bg_opa(btn,   80,            LV_PART_MAIN | LV_STATE_PRESSED);
@@ -237,7 +237,7 @@ void ui_sd_card_files_screen_init(void)
     _file_list = lv_obj_create(ui_sd_card_files);
     lv_obj_set_x(_file_list, 15);
     lv_obj_set_y(_file_list, 52);
-    lv_obj_set_size(_file_list, 290, 142);
+    lv_obj_set_size(_file_list, 290, 152);
     lv_obj_set_style_bg_opa(_file_list,     LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(_file_list, 0, 0);
     lv_obj_set_style_pad_all(_file_list,    0, 0);

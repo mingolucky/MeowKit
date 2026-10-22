@@ -17,10 +17,29 @@
 class TCPReceiver
 {
 public:
+  TCPReceiver() = default;
+  TCPReceiver(const TCPReceiver&) = delete;
+  TCPReceiver& operator=(const TCPReceiver&) = delete;
+  ~TCPReceiver() { stop(); }
+
+  void stop()
+  {
+    _client.stop();
+    _tcp.end();
+    if (_lcd && _ready) { _lcd->waitDMA(); }
+    for (auto& buf : _dmabufs) {
+      if (buf) heap_caps_free(buf);
+      buf = nullptr;
+    }
+    _dmabuf = nullptr;
+    _ready = false;
+  }
+
   bool setup(LovyanGFX* Lcd)
   {
+    if (_ready) return true;
+    if (!Lcd) return false;
     _lcd = Lcd;
-    _lcd->startWrite();
     Serial.println("TCPReceiver setup.");
 
     _lcd_width = Lcd->width();
@@ -46,14 +65,23 @@ public:
       _fp_write = writeGray;
       break;
     }
-    for (int i = 0; i < 2; ++i) { _dmabufs[i] = (uint8_t*)heap_caps_malloc(_lcd_width * (_rowskip + 1) * 16 * _bytesize, MALLOC_CAP_DMA); }
+    for (int i = 0; i < 2; ++i) {
+      _dmabufs[i] = (uint8_t*)heap_caps_malloc(_lcd_width * (_rowskip + 1) * 16 * _bytesize, MALLOC_CAP_DMA);
+      if (!_dmabufs[i]) {
+        Serial.println("[RetroTV] DMA allocation failed");
+        stop();
+        return false;
+      }
+    }
 
     _dmabuf = _dmabufs[0];
 
     _tcp.setNoDelay(true);
     _tcp.begin(63333);
 
-    _jdec.multitask_begin();
+    // Decode and draw on the app task. The upstream output task shares global
+    // state and can outlive a frame (or a deleted receiver).
+    _ready = true;
 
     Serial.println("TCPReceiver setup done.");
     return true;
@@ -61,61 +89,45 @@ public:
 
   bool loop()
   {
-    static uint32_t waitCount = 0;
-
-    if (SENDER_PREFIX_SIZE <= _client.available()
-     && SENDER_PREFIX_SIZE == _client.read(_tcpBuf, SENDER_PREFIX_SIZE)) {
-      waitCount = 0;
-      _recv_requested = false;
-      if (_tcpBuf[0] == 'J'
-       && _tcpBuf[1] == 'P'
-       && _tcpBuf[2] == 'G') {
-        _recv_remain = _tcpBuf[3] | _tcpBuf[4] << 8 | _tcpBuf[5] << 16 | _tcpBuf[6] << 24;
-        if (_recv_remain > 600) {
-          if (drawJpg()) {
-            ++_drawCount;
-          }
-        } else {
-          Serial.println("jpg too short");
-        }
-        if (0 < _recv_remain) {
-          Serial.printf("clear remain data:%d\r\n", _recv_remain);
-          int r;
-          for (uint32_t retry = 1000; retry; --retry) {
-            r = _client.read(_tcpBuf, _recv_remain < TCP_BUF_LEN ? _recv_remain : TCP_BUF_LEN);
-            if (r > 0) {
-              _recv_remain -= r;
-              if (!_recv_remain) break;
-            } else {
-              delay(1);
-              ++_delayCount;
-            }
-          }
-        }
-      } else {
-        Serial.printf("broken data: %02x %02x %02x %02x %02x %02x %02x %02x \n", _tcpBuf[0], _tcpBuf[1], _tcpBuf[2], _tcpBuf[3], _tcpBuf[4], _tcpBuf[5], _tcpBuf[6], _tcpBuf[7]);
-        do { delay(8); } while (0 < _client.read(_tcpBuf, TCP_BUF_LEN));
-      }
-    } else
-    if (!_client.connected()) {
+    if (!_ready) return false;
+    if (!_client.connected() && !_client.available()) {
+      resetClient();
       _client = _tcp.available();
-      _recv_requested = false;
-      waitCount = 0;
-    } else {
-      if (++waitCount > 1000) {
-        _recv_requested = false;
-      } else {
-        delay(1);
-        ++_delayCount;
-      }
-      if (!_recv_requested)   {
-        while (0 < _client.read(_tcpBuf, TCP_BUF_LEN));
-        _recv_requested = true;
-        waitCount = 0;
-        Serial.println("data request");
-        _client.print("JPG\n");
-      }
+      if (!_client) { delay(1); return true; }
+      _client.setNoDelay(true);
+      Serial.println("[RetroTV] sender connected");
     }
+    if (!_recv_requested) {
+      if (_client.print("JPG\n") != 4) { resetClient(); return true; }
+      _recv_requested = true;
+      _requestAt = millis();
+    }
+    // TCP headers may arrive in fragments: never discard a partial header.
+    if (_client.available() < SENDER_PREFIX_SIZE) {
+      if (millis() - _requestAt > FRAME_TIMEOUT_MS) resetClient();
+      delay(1);
+      return true;
+    }
+    _frameAt = millis();
+    if (!readExact(_tcpBuf, SENDER_PREFIX_SIZE)) { resetClient(); return true; }
+    const uint32_t size = uint32_t(_tcpBuf[3]) | (uint32_t(_tcpBuf[4]) << 8)
+                        | (uint32_t(_tcpBuf[5]) << 16) | (uint32_t(_tcpBuf[6]) << 24);
+    if (_tcpBuf[0] != 'J' || _tcpBuf[1] != 'P' || _tcpBuf[2] != 'G'
+        || size == 0 || size > MAX_FRAME_BYTES) {
+      Serial.println("[RetroTV] invalid frame header; closing sender");
+      resetClient();
+      return true;
+    }
+    _recv_remain = size;
+    if (drawJpg()) ++_drawCount;
+    else { resetClient(); return true; }
+    // Consume only the remaining bytes of this frame, never the next header.
+    while (_recv_remain > 0) {
+      const uint32_t n = _recv_remain < TCP_BUF_LEN ? _recv_remain : TCP_BUF_LEN;
+      if (!readExact(_tcpBuf, n)) { resetClient(); return true; }
+      _recv_remain -= n;
+    }
+    _recv_requested = false;
 
     if (_sec != millis() / 1000) {
       _sec = millis() / 1000;
@@ -133,14 +145,21 @@ private:
   static constexpr int SENDER_PREFIX_SIZE = 7;
   static constexpr uint32_t _rowskip = 2;
 
-  LovyanGFX* _lcd;
+  static constexpr uint32_t FRAME_TIMEOUT_MS = 5000;
+  static constexpr uint32_t READ_TIMEOUT_MS = 1500;
+  static constexpr uint32_t MAX_FRAME_BYTES = 1024 * 1024;
+  bool _ready = false;
+  uint32_t _requestAt = 0;
+  uint32_t _frameAt = 0;
+  unsigned _flip = 0;
+  LovyanGFX* _lcd = nullptr;
   uint_fast8_t _bytesize;
-  uint8_t* _dmabufs[2];
-  uint8_t* _dmabuf;
+  uint8_t* _dmabufs[2] = {};
+  uint8_t* _dmabuf = nullptr;
 
   WiFiServer _tcp;
   WiFiClient _client;
-  TJpgD _jdec;
+  TJpgD _jdec = {};
   int32_t _recv_remain = 0;
   uint32_t _sec = 0;
   int32_t _lcd_width;
@@ -156,43 +175,48 @@ private:
   uint8_t _tcpBuf[TCP_BUF_LEN];
   bool _recv_requested = false;
 
+  void resetClient() {
+    _client.stop();
+    _recv_requested = false;
+    _recv_remain = 0;
+  }
+
+  bool readExact(uint8_t* dst, uint32_t len) {
+    uint32_t progressAt = millis();
+    while (len) {
+      const int n = _client.read(dst, len);
+      if (n > 0) {
+        dst += n;
+        len -= n;
+        progressAt = millis();
+      } else {
+        if (!_client.connected() || millis() - progressAt > READ_TIMEOUT_MS
+            || millis() - _frameAt > FRAME_TIMEOUT_MS) {
+          Serial.println("[RetroTV] frame read interrupted/timeout");
+          return false;
+        }
+        delay(1);
+        ++_delayCount;
+      }
+      if (millis() - _frameAt > FRAME_TIMEOUT_MS) return false;
+    }
+    return true;
+  }
+
   static uint32_t jpgRead(TJpgD *jdec, uint8_t *buf, uint32_t len) {
     TCPReceiver* me = (TCPReceiver*)jdec->device;
-    WiFiClient* client = &me->_client;
-    uint32_t retry;
-
-    if (len > me->_recv_remain) {
-      len = me->_recv_remain;
-    } else if (len == TJPGD_SZBUF) {
-      if (me->_recv_remain < TJPGD_SZBUF * 2 && TJPGD_SZBUF < me->_recv_remain) { // dataend read tweak
-        len = me->_recv_remain - len;
-      }
-    } else if (client->available() < len) {
-      for (retry = 1000; client->available() < len && retry; --retry) {
-        delay(1);
-        ++me->_delayCount;
-      }
+    if (me->_recv_remain <= 0) return 0;
+    if (len > uint32_t(me->_recv_remain)) len = me->_recv_remain;
+    const uint32_t requested = len;
+    // The decoder can skip a segment larger than the scratch buffer.
+    while (len) {
+      const uint32_t n = !buf && len > TCP_BUF_LEN ? TCP_BUF_LEN : len;
+      if (!me->readExact(buf ? buf : me->_tcpBuf, n)) return 0;
+      me->_recv_remain -= n;
+      len -= n;
+      if (buf) buf += n;
     }
-
-    int l = client->read(buf ? buf : me->_tcpBuf, len);
-    if (l <= 0) {
-      for (retry = 1000; retry; --retry) {
-        delay(1);
-        ++me->_delayCount;
-        l = client->read(buf ? buf : me->_tcpBuf, len);
-        if (l > 0) break;
-      }
-    }
-    if (l <= 0) {
-      Serial.printf("jpgRead error:%d:%d:%d\r\n", l, len, client->available());
-      return 0;
-    }
-    me->_recv_remain -= l;
-    if (!me->_recv_requested && me->_recv_remain <= client->available()) {
-      me->_recv_requested = true;
-      client->print("JPG\n"); // request the next image from the client
-    }
-    return l;
+    return requested;
   }
 
   static uint32_t jpgWrite(TJpgD *jdec, void *bitmap, TJpgD::JRECT *rect) {
@@ -328,7 +352,6 @@ private:
   }
 
   static uint32_t jpgWriteRow(TJpgD *jdec, uint32_t y, uint32_t h) {
-    static int flip = 0;
     TCPReceiver* me = (TCPReceiver*)jdec->device;
 
     if (y == 0) {
@@ -357,8 +380,10 @@ private:
     case lgfx::color_depth_t::grayscale_8bit: me->_lcd->pushPixelsDMA((lgfx::grayscale_t*)(me->_dmabuf), me->_out_width * h);  break;
     }
 
-    flip = !flip;
-    me->_dmabuf = me->_dmabufs[flip];
+    me->_flip ^= 1;
+    me->_lcd->waitDMA();
+    me->_dmabuf = me->_dmabufs[me->_flip];
+    delay(1); // allow idle/WiFi tasks to run during CPU-heavy frames
     return 1;
   }
 
@@ -368,6 +393,7 @@ private:
       Serial.printf("prepare failed! %d\r\n", jres);
       return false;
     }
+    if (_jdec.width <= 0 || _jdec.height <= 0 || _jdec.width > 4096 || _jdec.height > 4096) return false;
     _out_width = _jdec.width < _lcd_width ? _jdec.width : _lcd_width;
     _jpg_x = (_lcd_width - _jdec.width) >> 1;
     if (0 > _jpg_x) {
@@ -385,7 +411,12 @@ private:
       _off_y = 0;
     }
 
-    jres = _jdec.decomp_multitask(jpgWrite, jpgWriteRow, _rowskip);
+    _flip = 0;
+    _dmabuf = _dmabufs[0];
+    _lcd->startWrite();
+    jres = _jdec.decomp(jpgWrite, jpgWriteRow, _rowskip);
+    _lcd->waitDMA();
+    _lcd->endWrite();
     if (jres != TJpgD::JDR_OK) {
       Serial.printf("decomp failed! %d\r\n", jres);
       return false;

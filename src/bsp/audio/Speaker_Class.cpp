@@ -338,6 +338,9 @@ void Speaker_Class::tone(uint32_t freq_hz, uint32_t duration_ms, int volume)
     const uint32_t total_samples = (uint32_t)((uint64_t)rate * duration_ms / 1000);
     const float omega = 2.0f * (float)M_PI * freq_hz / rate;
     const float amplitude = 16000.0f;  // ~50% of int16_t range
+    // Ramp both ends to zero; abruptly cutting a sine wave creates a click.
+    const uint32_t ramp_samples = (total_samples / 2 < rate / 500)
+                                    ? total_samples / 2 : rate / 500;
 
     const size_t chunk_samples = _cfg.dma_buf_len;
     int16_t stereo_buf[chunk_samples * 2];
@@ -348,7 +351,15 @@ void Speaker_Class::tone(uint32_t freq_hz, uint32_t duration_ms, int volume)
         size_t count = (remaining > chunk_samples) ? chunk_samples : remaining;
 
         for (size_t i = 0; i < count; i++) {
-            int16_t sample = (int16_t)(amplitude * sinf(omega * (generated + i)));
+            const uint32_t pos = generated + i;
+            float gain = 1.0f;
+            if (ramp_samples) {
+                if (pos < ramp_samples) gain = (float)pos / ramp_samples;
+                const uint32_t tail = total_samples - 1 - pos;
+                if (tail < ramp_samples && (float)tail / ramp_samples < gain)
+                    gain = (float)tail / ramp_samples;
+            }
+            int16_t sample = (int16_t)(amplitude * gain * sinf(omega * pos));
             stereo_buf[i * 2]     = sample;  // L
             stereo_buf[i * 2 + 1] = sample;  // R
         }
@@ -357,7 +368,7 @@ void Speaker_Class::tone(uint32_t freq_hz, uint32_t duration_ms, int volume)
         generated += count;
     }
 
-    // Fade out to avoid click: write a short zero buffer
+    // Follow the faded waveform with silence.
     memset(stereo_buf, 0, chunk_samples * 2 * sizeof(int16_t));
     _i2s_write(stereo_buf, chunk_samples * 2 * sizeof(int16_t));
 

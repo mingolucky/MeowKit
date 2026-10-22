@@ -226,7 +226,11 @@ void App04::_startReceiver()
     try {
         _recv = new TCPReceiver();
         if (_recv) {
-            _recv->setup(&_device->Lcd);
+            if (!_recv->setup(&_device->Lcd)) {
+                delete _recv;
+                _recv = nullptr;
+                return;
+            }
             Serial.println("[App04] TCP receiver started");
         }
     } catch (...) {
@@ -363,6 +367,7 @@ void App04::onRunning()
         case State::READY:
             if (btnA) {
                 _startReceiver();
+                if (!_recv) break;
                 _state = State::RUNNING;
                 // Receiver draws full-screen — just update footer
                 _drawFooter(_device->Lcd, _state);

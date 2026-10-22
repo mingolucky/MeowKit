@@ -49,7 +49,7 @@ void Game::begin(DEVICES *device)
     _framebuffer->setPsram(true);
     _framebuffer->createSprite(TFT_WIDTH, TFT_HEIGHT);
 
-    dino_sfx_init(&_device->speaker);
+    dino_sfx_init(_device);
 
     _dino = new Dino(_DINO_X, _BASELINE);
 

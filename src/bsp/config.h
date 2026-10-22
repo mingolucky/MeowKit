@@ -13,9 +13,8 @@
 /* ═══════════════════════════════════════════════════════════════
  *  Project Meta
  * ═══════════════════════════════════════════════════════════════ */
-#define BSP_VERSION                 "v1.0"
-#define PROJECT_NAME                "MeowKit"
-#define FIRMWARE_VERSION            "v1.0.1"
+#define PROJECT_NAME                "MeowKit-S3"
+#define FIRMWARE_VERSION            "v1.0.3"
 
 /* ═══════════════════════════════════════════════════════════════
  *  Hardware Board Test (BBT) — set 1 to enable, 0 to disable
@@ -148,4 +147,3 @@
 #define DIPIN                       HAL_PIN_I2S_DIN
 #define HAL_PIN_WS2812_LED          HAL_PIN_LED_WS2812
 #define HAL_IRQ_PIN                 HAL_PIN_PMU_IRQ
-#define BSP_VERISON                 BSP_VERSION   /* typo compat */

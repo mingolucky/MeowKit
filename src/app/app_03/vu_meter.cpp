@@ -5,10 +5,12 @@
  * Render pipeline:
  *   1. memcpy bgPatch → workSpr   (fresh BG stamp each frame)
  *   2. needle → workSpr           (chroma-keyed rotate/zoom)
- *   3. workSpr → LCD              (single push, no ghost trails)
+ *   3. alpha foreground mask -> workSpr (curved edge only)
+ *   4. workSpr -> LCD (single transfer, no ghost trails)
  */
 #include "vu_meter.h"
 #include "vu_meter_assets.h"
+#include "vu_meter_compositor.h"
 #include <cstring>
 #include <cmath>
 #include <algorithm>
@@ -166,7 +168,7 @@ void App03::_doHeavyInit()
     }
     _bgPatch->fillSprite(TFT_BLACK);
 
-    /* 4. workSpr — per-frame compositing buffer (above-mask zone) */
+    /* 4. workSpr — per-frame compositing buffer (full needle sweep) */
     _workSpr = new LGFX_Sprite(&_device->Lcd);
     _workSpr->setPsram(true);
     _workSpr->setColorDepth(16);
@@ -174,23 +176,20 @@ void App03::_doHeavyInit()
         fail("PSRAM alloc failed (workSpr)"); return;
     }
 
-    /* 5. Decode embedded artwork once. The mask sprite contains a precomposed
-     *    background + foreground crop, so each frame only needs one small,
-     *    opaque push after the needle. */
-    _maskSprite = new LGFX_Sprite(&_device->Lcd);
-    _maskSprite->setPsram(true);
-    _maskSprite->setColorDepth(16);
-    if (!_maskSprite->createSprite(kMaskW, kMaskH)) {
-        fail("PSRAM alloc failed (mask)"); return;
+    /* 5. Cache foreground color + alpha once. Transparent mask pixels must
+     * leave the needle visible; flattening onto BG makes an opaque rectangle. */
+    _maskPixels = static_cast<uint32_t*>(heap_caps_malloc(
+        vu_meter::maskW * vu_meter::maskH * sizeof(uint32_t),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
+    if (!_maskPixels || !vu_meter::decodeMask(
+            vu_meter_mask_png, vu_meter_mask_png_len, _maskPixels)) {
+        fail("VU mask decode failed"); return;
     }
-
-    _device->Lcd.drawPng(vu_meter_bg_png, vu_meter_bg_png_len, 0, 0);
-    _bgPatch->drawPng(vu_meter_bg_png, vu_meter_bg_png_len,
-                      -kPatchX, -kPatchY);
-    _maskSprite->drawPng(vu_meter_bg_png, vu_meter_bg_png_len,
-                         -kMaskX, -kMaskY);
-    _maskSprite->drawPng(vu_meter_mask_png, vu_meter_mask_png_len,
-                         -kMaskX, -kMaskY);
+    if (!_device->Lcd.drawPng(vu_meter_bg_png, vu_meter_bg_png_len, 0, 0)
+        || !_bgPatch->drawPng(vu_meter_bg_png, vu_meter_bg_png_len,
+                              -kPatchX, -kPatchY)) {
+        fail("VU background decode failed"); return;
+    }
 
     /* 6. Needle sprite — pivot row = NEEDLE_TIP_Y + kNeedleLen */
     {
@@ -259,7 +258,7 @@ void App03::_releaseResources()
     del(_bgPatch);
     del(_workSpr);
     del(_needleSprite);
-    del(_maskSprite);
+    if (_maskPixels) { heap_caps_free(_maskPixels); _maskPixels = nullptr; }
 }
 
 void App03::onClose()
@@ -303,27 +302,20 @@ void App03::onRunning()
            _bgPatch->getBuffer(),
            (size_t)kPatchW * kWorkH * sizeof(uint16_t));
 
-    /* 2. Composite needle onto work sprite.
-     *    Pivot position in workSpr coords = (pivotX-kPatchX, pivotY-kPatchY).
-     *    Rows >= kWorkH are outside workSpr and silently clipped — those rows
-     *    are in the mask zone and handled by maskSprite below. */
+    /* 2. Draw the whole needle into the background patch. */
     if (_needleSprite)
         _needleSprite->pushRotateZoom(_workSpr,
                                       _pivotX - (float)kPatchX,
                                       _pivotY - (float)kPatchY,
                                       ang, 1.0f, 1.0f, kChroma24);
 
-    /* 3. Composite the foreground mask into the same off-screen frame.
-     *
-     * Pushing workSpr and maskSprite to the LCD separately exposed the
-     * unmasked needle for a fraction of a frame. That bus-level tear was
-     * visible as the needle and mask flashing while the needle moved.
-     * The mask lies completely inside workSpr, so merge it here and perform
-     * one atomic-looking LCD transfer below. */
-    if (_maskSprite)
-        _maskSprite->pushSprite(_workSpr,
-                                kMaskX - kPatchX,
-                                kMaskY - kPatchY);
+    /* 3. Apply only the foreground's nontransparent pixels. Cache decoding
+     * at startup and blend in-place to retain the curved antialiased edge. */
+    if (_maskPixels)
+        vu_meter::compositeMask(static_cast<uint16_t*>(_workSpr->getBuffer()),
+                               kPatchW, kWorkH,
+                               vu_meter::maskX - kPatchX,
+                               vu_meter::maskY - kPatchY, _maskPixels);
 
     /* 4. Present the fully composed frame in one LCD transaction. */
     _workSpr->pushSprite(&_device->Lcd, kPatchX, kPatchY);

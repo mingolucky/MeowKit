@@ -1,1 +1,0 @@
-310fd2b38fd7f0311b199e543648ecb203878573dc83910a72aa7d9c32943318  HardwareSerialMonitor-v1.4.4-MeowKit.zip
