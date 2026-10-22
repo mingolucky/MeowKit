@@ -25,6 +25,7 @@
 #include "app_07/ble_spam.h"    /* BLE Spam     */
 #include "app_08/badusb.h"      /* Bad USB      */
 #include "app_09/infrared.h"    /* Infrared     */
+#include "app_10/app_runner.h"  /* Lua Apps     */
 
 #include <mooncake.h>
 #include <memory>
@@ -45,6 +46,7 @@ inline void registerAllApps(mooncake::Mooncake& mc, DEVICES* dev)
     mc.installApp(std::make_unique<MOONCAKE::APPS::App07>(dev));     /* app_07  BLE Spam     */
     mc.installApp(std::make_unique<MOONCAKE::APPS::AppBadUSB>(dev)); /* app_08  Bad USB      */
     mc.installApp(std::make_unique<MOONCAKE::APPS::App09>(dev));     /* app_09  Infrared     */
+    mc.installApp(std::make_unique<MOONCAKE::APPS::AppRunner>(dev)); /* app_10  Lua Apps     */
 }
 
 /**
@@ -63,6 +65,7 @@ static const void* const APP_BUILTIN_ICONS[] = {
     &ui_img_ble_spam_png,    /* app_07  BLE Spam    */
     &ui_img_badusb_png,      /* app_08  Bad USB     */
     &ui_img_infrared_png,    /* app_09  Infrared    */
+    &ui_img_matrix_rain_png, /* app_10  Lua Apps (placeholder icon — TODO dedicated) */
 };
 static const int APP_BUILTIN_ICONS_COUNT =
     (int)(sizeof(APP_BUILTIN_ICONS) / sizeof(APP_BUILTIN_ICONS[0]));

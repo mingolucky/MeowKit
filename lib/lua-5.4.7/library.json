@@ -1,0 +1,17 @@
+{
+  "name": "lua",
+  "version": "5.4.7",
+  "description": "Lua 5.4.7 interpreter, embedded in MeowKit as the plugin scripting engine",
+  "keywords": ["lua", "scripting", "interpreter"],
+  "license": "MIT",
+  "frameworks": "arduino",
+  "platforms": "espressif32",
+  "build": {
+    "srcDir": "src",
+    "srcFilter": [
+      "+<*.c>",
+      "-<lua.c>",
+      "-<luac.c>"
+    ]
+  }
+}

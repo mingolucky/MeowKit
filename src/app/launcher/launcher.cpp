@@ -59,6 +59,9 @@
 #include "../../system/system_sound.h"
 #include <Arduino.h>
 #include <SD_MMC.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <SD_MMC.h>
 #include <lvgl.h>
 #include <esp_system.h>
 #include <freertos/FreeRTOS.h>
@@ -429,34 +432,87 @@ void Launcher::onLoop()
 
 /* ── SD card ───────────────────────────────────────── */
 
+/* ── Hang-proof SD mount ───────────────────────────────────────────────
+ * Some microSD cards make SD_MMC.begin() block for a very long time (or hang
+ * outright) in the ROM card-init handshake — which, run inline from onCreate(),
+ * freezes the entire boot before the main loop ever starts. So we mount on a
+ * short-lived worker task and bound the wait: if it doesn't finish in time we
+ * continue without SD rather than hang the device. A couple of retries (with
+ * SD_MMC.end() between) cover cards whose init is merely flaky rather than
+ * stuck. Frequency isn't varied — card init always runs at 400 kHz internally,
+ * so the data clock doesn't affect whether init succeeds. */
+namespace {
+struct SdMountResult {
+    volatile bool done = false;
+    volatile bool ok   = false;
+};
+
+void sd_mount_worker(void* arg)
+{
+    auto* r = static_cast<SdMountResult*>(arg);
+    bool ok = false;
+    for (int attempt = 0; attempt < 3 && !ok; ++attempt) {
+        if (attempt) { SD_MMC.end(); vTaskDelay(pdMS_TO_TICKS(150)); }
+        if (SD_MMC.begin("/sdcard", true /*1-bit*/, false /*no format*/, 10000 /*kHz*/) &&
+            SD_MMC.cardType() != CARD_NONE) {
+            ok = true;
+        }
+    }
+    r->ok   = ok;
+    r->done = true;       // publish result last
+    vTaskDelete(nullptr); // self-reap
+}
+} // namespace
+
 void Launcher::initSD()
 {
-    Serial.println("[Launcher] Mounting SD (SDMMC 1-bit)...");
+    Serial.println("[Launcher] Mounting SD (SDMMC 1-bit, bounded)...");
 
-    /* Pin assignment */
+    /* Pin assignment (quick, cannot hang) */
     if (!SD_MMC.setPins(HAL_PIN_SD_CLK, HAL_PIN_SD_CMD, HAL_PIN_SD_D0)) {
         Serial.println("[Launcher] SD pin config failed");
         _sd_ready = false;
         return;
     }
 
-    /* Try mounting — single attempt at safe speed, max ~5s timeout */
-    Serial.printf("[Launcher] SD attempt @ 10MHz (1-bit)...\n");
-    bool mounted = SD_MMC.begin("/sdcard", true, false, 10000);
+    /* Mount on a worker so a slow/stuck card can't freeze boot. Static so it
+     * stays valid even if the worker outlives our wait below. */
+    static SdMountResult res;
+    res.done = false;
+    res.ok   = false;
 
-    if (!mounted || SD_MMC.cardType() == CARD_NONE) {
-        SD_MMC.end();
-        Serial.println("[Launcher] SD mount failed — running without SD");
-        _sd_ready = false;
+    TaskHandle_t h = nullptr;
+    if (xTaskCreatePinnedToCore(sd_mount_worker, "sd_mount", 8192, &res, 5, &h, 1) != pdPASS) {
+        /* Couldn't spawn — fall back to a single inline attempt (original path) */
+        bool mounted = SD_MMC.begin("/sdcard", true, false, 10000) && SD_MMC.cardType() != CARD_NONE;
+        _sd_ready = mounted;
+        Serial.printf("[Launcher] SD %s (inline fallback)\n", mounted ? "OK" : "failed");
         return;
     }
 
-    uint64_t sizeMB = SD_MMC.cardSize() / (1024 * 1024);
-    Serial.printf("[Launcher] SD OK — %lluMB  Total: %lluMB  Used: %lluMB\n",
-                  (unsigned long long)sizeMB,
-                  (unsigned long long)(SD_MMC.totalBytes() / (1024 * 1024)),
-                  (unsigned long long)(SD_MMC.usedBytes()  / (1024 * 1024)));
-    _sd_ready = true;
+    const uint32_t budget_ms = 6000;
+    const uint32_t start     = millis();
+    while (!res.done && (millis() - start) < budget_ms) {
+        delay(20);
+    }
+
+    if (res.done && res.ok) {
+        _sd_ready = true;
+        Serial.printf("[Launcher] SD OK — %lluMB  Total: %lluMB  Used: %lluMB\n",
+                      (unsigned long long)(SD_MMC.cardSize()   / (1024 * 1024)),
+                      (unsigned long long)(SD_MMC.totalBytes() / (1024 * 1024)),
+                      (unsigned long long)(SD_MMC.usedBytes()  / (1024 * 1024)));
+    } else if (res.done) {
+        SD_MMC.end();
+        _sd_ready = false;
+        Serial.println("[Launcher] SD mount failed — running without SD");
+    } else {
+        /* Timed out: leave the worker running (it self-reaps). If the card
+         * mounts late, SD_MMC is still usable — the App Runner re-scans /apps
+         * when opened — but boot is no longer blocked. */
+        _sd_ready = false;
+        Serial.println("[Launcher] SD mount timed out — continuing without SD");
+    }
 }
 
 /* ── Install apps ──────────────────────────────────── */

@@ -13,6 +13,15 @@ Thumbs.db
 *.key
 *.pem
 
+# Backend / runtime config must never be committed — the firmware is a
+# universal front end; all endpoints, tokens and protocol options live in
+# runtime config on the SD card. Commit only *.example templates.
+secrets.lua
+config.local.*
+*.local.lua
+*.secret.*
+sd-config/
+
 # Local release artifacts
 dist/
 output/
